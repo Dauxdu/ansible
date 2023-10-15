@@ -1,0 +1,76 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Disable Root Authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?PermitRootLogin"
+        line: "PermitRootLogin no"
+    - name: Setup Maximum Authorization Tries
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?MaxAuthTries"
+        line: "MaxAuthTries 3"
+    - name: Setup Maximum Sessions
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?MaxSessions"
+        line: "MaxSessions 2"
+    - name: Enable Public Key Authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?PubkeyAuthentication"
+        line: "PubkeyAuthentication yes"
+    - name: Enable Ignoring Settings ~/.rhosts & ~/.shosts
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?IgnoreRhosts"
+        line: "IgnoreRhosts yes"
+    - name: Disable Password Authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?PasswordAuthentication"
+        line: "PasswordAuthentication no"
+    - name: Disable Empty Password Login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?PermitEmptyPasswords"
+        line: "PermitEmptyPasswords no"
+    - name: Disable SSHD Permission
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?UsePAM"
+        line: "UsePAM no"
+    - name: Disable X11 Forward
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?X11Forwarding"
+        line: "X11Forwarding no"
+    - name: Disable Agent Forward
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?AllowAgentForwarding"
+        line: "AllowAgentForwarding no"
+    - name: Disable TCP Forward
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?AllowTcpForwarding"
+        line: "AllowTcpForwarding no"
+    - name: Disable Tunnel
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^#?PermitTunnel"
+        line: "PermitTunnel no"

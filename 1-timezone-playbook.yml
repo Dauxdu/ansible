@@ -1,0 +1,21 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Change TimeZone
+      command:
+        cmd: timedatectl set-timezone Europe/Moscow
+    - name: Install NTP
+      apt:
+        name: ntp
+    - name: Copy NTP Config [local -> remote]
+      template:
+        src: ./templates/ntp.conf
+        dest: /etc/ntp.conf
+    - name: Enable NTP Service
+      service:
+        name: ntp
+        enabled: yes
+    - name: Restart NTP Service
+      service:
+        name: ntp
+        state: restarted

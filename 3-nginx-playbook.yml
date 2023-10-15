@@ -1,0 +1,29 @@
+---
+- hosts: web
+  become: yes
+  tasks:
+    - name: Install Certbot
+      apt:
+        name: certbot
+    - name: Run Certbot for YourDomain
+      shell: certbot certonly --standalone --non-interactive --agree-tos -d YourDomain -m YourEMail
+      args:
+        executable: /bin/bash
+    - name: Add certbot renew command to crontab
+      cron:
+        name: "Renew Certbot SSL certificates"
+        job: "certbot renew --non-interactive"
+        special_time: monthly
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+    - name: Copy nginx file [local -> remote]
+      template:
+        src: ./template/nginx.conf
+        dest: /etc/nginx/sites-available/default
+    - name: Enable Nginx Service
+      service:
+        name: nginx
+        enabled: true
+        state: started
