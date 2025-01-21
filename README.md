@@ -1,4 +1,4 @@
-# **🤔 EXAMPLES ansible playbooks** 
+# **🤔 EXAMPLES Ansible playbooks** 
 
 This repository contains a collection of Ansible playbooks, written in YAML format, that automate the configuration and management of various aspects of a system.
 
@@ -8,9 +8,11 @@ This repository contains a collection of Ansible playbooks, written in YAML form
 - [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/index.html)
 
 ## Usage
-To run a playbook, use the ansible-playbook command followed by the path to the playbook file. For example, to run the 0-apt-playbook.yml playbook, use the following command:
+To run a playbook, use the `ansible-playbook` command followed by the path to the playbook file. For example, to run the 0-apt-playbook.yml playbook, use the following command:
 
-`ansible-playbook 0-apt-playbook.yml`
+``` Bash
+ansible-playbook 0-apt-playbook.yml
+```
 
 🎯 Running a playbook will execute the defined tasks against the specified target hosts, automating the necessary configuration steps.
 
