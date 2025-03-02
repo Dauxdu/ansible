@@ -1,0 +1,27 @@
+---
+- name: Install NTP (Debian/Ubuntu)
+  apt:
+    name: ntp
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install NTP (RHEL/CentOS)
+  yum:
+    name: ntp
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Configure NTP
+  template:
+    src: ntp.conf.j2
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart ntp
+
+- name: Ensure NTP service is enabled and running
+  service:
+    name: "{{ 'ntp' if ansible_os_family == 'Debian' else 'ntpd' }}"
+    enabled: true
+    state: started

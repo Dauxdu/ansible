@@ -1,0 +1,7 @@
+---
+warn_list:
+  - command-instead-of-shell
+  - no-handler
+  - risky-file-permissions
+  - no-changed-when
+  - no-jinja-when

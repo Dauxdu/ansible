@@ -1,0 +1,31 @@
+---
+- name: Generate hashed password
+  set_fact:
+    hashed_password: "{{ admin_pwd | string | password_hash('sha512') }}"
+
+- name: Create admin user
+  user:
+    name: "{{ admin_user }}"
+    password: "{{ hashed_password }}"
+    groups: sudo
+    append: true
+    shell: /bin/bash
+    state: present
+
+- name: Add user to docker group
+  user:
+    name: "{{ admin_user }}"
+    groups: docker
+    append: true
+
+- name: Add SSH key for admin user
+  authorized_key:
+    user: "{{ admin_user }}"
+    key: "{{ admin_ssh_key }}"
+    state: present
+
+- name: Add SSH key for deploy
+  authorized_key:
+    user: "{{ admin_user }}"
+    key: "{{ admin_ssh_key_deploy }}"
+    state: present

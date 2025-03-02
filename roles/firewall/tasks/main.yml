@@ -1,0 +1,45 @@
+---
+- name: Install UFW (Debian/Ubuntu)
+  apt:
+    name: ufw
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Set UFW default policy to deny incoming traffic (Debian/Ubuntu)
+  ufw:
+    direction: incoming
+    policy: deny
+  when: ansible_os_family == "Debian"
+
+- name: Allow ports with UFW (Debian/Ubuntu)
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+  with_items: "{{ firewall_allowed_ports }}"
+  when: ansible_os_family == "Debian"
+
+- name: Enable UFW (Debian/Ubuntu)
+  ufw:
+    state: enabled
+  when: ansible_os_family == "Debian"
+
+- name: Install firewalld (RHEL/CentOS)
+  yum:
+    name: firewalld
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Allow ports with firewalld (RHEL/CentOS)
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    state: enabled
+  with_items: "{{ firewall_allowed_ports }}"
+  when: ansible_os_family == "RedHat"
+
+- name: Enable and start firewalld (RHEL/CentOS)
+  service:
+    name: firewalld
+    enabled: true
+    state: started
+  when: ansible_os_family == "RedHat"

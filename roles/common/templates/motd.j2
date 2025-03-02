@@ -1,0 +1,10 @@
+# Welcome to {{ ansible_hostname }}!
+
+----------------------------------------------
+- Hostname: {{ ansible_hostname }}
+- OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+- Kernel: {{ ansible_kernel }}
+- Uptime: {{ ansible_uptime_seconds // 3600 }} hours
+----------------------------------------------
+
+This system is intended for authorized use only. Unauthorized access is prohibited.

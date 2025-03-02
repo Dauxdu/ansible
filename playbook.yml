@@ -1,0 +1,10 @@
+---
+- name: Base server setup
+  hosts: cloud
+  become: true
+  roles:
+    - common
+    - ntp
+    - users
+    - firewall
+    - ssh

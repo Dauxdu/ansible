@@ -1,0 +1,33 @@
+---
+- name: Update apt cache (Debian/Ubuntu)
+  apt:
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Update yum cache (RHEL/CentOS)
+  yum:
+    name: "*"
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: Set timezone
+  timezone:
+    name: "{{ timezone }}"
+
+- name: Install common packages
+  package:
+    name:
+      - curl
+      - wget
+      - nano
+      - htop
+      - git
+    state: present
+
+- name: Configure MOTD
+  template:
+    src: motd.j2
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: 0644
