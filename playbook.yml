@@ -1,6 +1,6 @@
 ---
 - name: Base server setup
-  hosts: cloud
+  hosts: all
   become: true
   roles:
     - common

@@ -22,6 +22,7 @@
       - nano
       - htop
       - git
+      - netstat
     state: present
 
 - name: Configure MOTD
