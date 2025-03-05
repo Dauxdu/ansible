@@ -71,16 +71,18 @@ ansible-project/
 ├── group_vars/
 │   └── all.yml
 ├── host_vars/
-│   └── Daring-Bittern.yml
+│   ├── Daring-Bittern.yml
+│   └── Fair-Bittern.yml
 ├── roles/
 │   ├── common/
 │   │   ├── tasks/
 │   │   │   └── main.yml
-│   │   └── templates/
-│   │       └── motd.j2
 │   ├── firewall/
 │   │   └── tasks/
 │   │       └── main.yml
+│   ├── motd/
+│   │   ├── tasks/
+│   │   │   └── main.yml
 │   ├── ntp/
 │   │   ├── handlers/
 │   │   │   └── main.yml
@@ -98,8 +100,8 @@ ansible-project/
 │           └── main.yml
 ├── ansible.cfg
 ├── inventory
-├── playbook.yml
-└── int_script.sh
+├── int_script.sh
+└── playbook.yml
 ```
 
 ---
