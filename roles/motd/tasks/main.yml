@@ -1,0 +1,46 @@
+---
+- name: Remove static MOTD file
+  file:
+    path: /etc/motd
+    state: absent
+
+- name: Create symbolic link for MOTD
+  file:
+    src: /var/run/motd
+    dest: /etc/motd
+    state: link
+    force: true
+    follow: false
+
+- name: Create dynamic MOTD script
+  copy:
+    dest: /etc/update-motd.d/99-custom-motd
+    content: |
+      #!/bin/bash
+      HOSTNAME=$(hostname)
+      OS=$(lsb_release -d | cut -f2)
+      KERNEL=$(uname -r)
+      UPTIME=$(uptime -p | sed 's/up //')
+      CPU_CORES=$(nproc)
+      MEMORY_TOTAL=$(free -h | grep Mem | awk '{print $2}')
+      MEMORY_FREE=$(free -h | grep Mem | awk '{print $4}')
+      DISK_TOTAL=$(df -h / | grep / | awk '{print $2}')
+      DISK_FREE=$(df -h / | grep / | awk '{print $4}')
+
+      echo "----------------------------------------------"
+      echo "# Welcome to $HOSTNAME!"
+      echo "----------------------------------------------"
+      echo "- Hostname: $HOSTNAME"
+      echo "- OS: $OS"
+      echo "- Kernel: $KERNEL"
+      echo "- Uptime: $UPTIME"
+      echo "- CPU: $CPU_CORES cores"
+      echo "- Memory: $MEMORY_TOTAL total, $MEMORY_FREE free"
+      echo "- Disk: $DISK_TOTAL total, $DISK_FREE free"
+      echo "----------------------------------------------"
+      echo "This system is intended for authorized use only."
+      echo "Unauthorized access is prohibited."
+      echo "----------------------------------------------"
+    owner: root
+    group: root
+    mode: "0755"
