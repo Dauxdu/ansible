@@ -1,11 +1,17 @@
 ---
+- name: Ensure SSH service is enabled and started
+  service:
+    name: ssh
+    enabled: true
+    state: started
+
 - name: Configure SSH
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "^{{ item.regexp }}"
     line: "{{ item.line }}"
     state: present
-  with_items:
+  loop:
     - { regexp: "^#?Port", line: "Port {{ ssh_port }}" }
     - { regexp: "^#?PermitRootLogin", line: "PermitRootLogin {{ ssh_permit_root_login }}" }
     - { regexp: "^#?PubkeyAuthentication", line: "PubkeyAuthentication {{ ssh_pubkey_authentication }}" }
