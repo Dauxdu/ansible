@@ -9,24 +9,24 @@
   ansible.builtin.group:
     name: "{{ item }}"
     state: present
-  loop: "{{ sudo_user_groups | default([]) }}"
+  loop: "{{ set_users_sudo_groups | default([]) }}"
 
 - name: Create deploy user groups
   ansible.builtin.group:
     name: "{{ item }}"
     state: present
-  loop: "{{ deploy_user_groups | default([]) }}"
+  loop: "{{ set_users_deploy_groups | default([]) }}"
 
 - name: Create sudo users
   ansible.builtin.user:
     name: "{{ item.name }}"
     state: present
-    groups: "{{ sudo_user_groups | join(',') }}"
+    groups: "{{ set_users_sudo_groups | join(',') }}"
     append: true
     shell: /bin/bash
     create_home: true
     password_lock: false
-  loop: "{{ sudo_users | default([]) }}"
+  loop: "{{ set_users_sudo | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
 
@@ -34,12 +34,12 @@
   ansible.builtin.user:
     name: "{{ item.name }}"
     state: present
-    groups: "{{ deploy_user_groups | join(',') }}"
+    groups: "{{ set_users_deploy_groups | join(',') }}"
     append: true
     shell: /bin/bash
     create_home: true
     password_lock: true
-  loop: "{{ deploy_users | default([]) }}"
+  loop: "{{ set_users_deploy | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
 
@@ -51,10 +51,10 @@
     group: root
     mode: "0440"
     validate: "/usr/sbin/visudo -cf %s"
-  loop: "{{ sudo_users }}"
+  loop: "{{ set_users_sudo }}"
   loop_control:
     label: "{{ item.name }}"
-  when: sudo_users | length > 0
+  when: set_users_sudo | length > 0
 
 - name: Configure restricted sudo for deploy users
   ansible.builtin.copy:
@@ -68,10 +68,10 @@
     group: root
     mode: "0440"
     validate: "/usr/sbin/visudo -cf %s"
-  loop: "{{ deploy_users }}"
+  loop: "{{ set_users_deploy }}"
   loop_control:
     label: "{{ item.name }}"
-  when: deploy_users | length > 0
+  when: set_users_deploy | length > 0
 
 - name: Manage SSH authorized keys for sudo users
   ansible.posix.authorized_key:
@@ -79,10 +79,10 @@
     state: present
     key: "{{ item.ssh_public_key }}"
     exclusive: false
-  loop: "{{ sudo_users }}"
+  loop: "{{ set_users_sudo }}"
   loop_control:
     label: "{{ item.name }}"
-  when: sudo_users | length > 0
+  when: set_users_sudo | length > 0
 
 - name: Manage SSH authorized keys for deploy users
   ansible.posix.authorized_key:
@@ -90,7 +90,7 @@
     state: present
     key: "{{ item.ssh_public_key }}"
     exclusive: false
-  loop: "{{ deploy_users }}"
+  loop: "{{ set_users_deploy }}"
   loop_control:
     label: "{{ item.name }}"
-  when: deploy_users | length > 0
+  when: set_users_deploy | length > 0
