@@ -1,5 +1,5 @@
 ---
-apt_packages:
+set_packages_apt:
   - ca-certificates
   - gnupg
   - qemu-guest-agent
@@ -16,4 +16,4 @@ apt_packages:
   - python3-pip
   - git
 
-apt_packages_remove: []
+set_packages_apt_remove: []
