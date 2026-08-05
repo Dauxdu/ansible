@@ -19,41 +19,13 @@
     - /etc/netplan/50-cloud-init.yaml
     - /etc/netplan/50-cloud-init.yml
 
-- name: Deploy netplan configuration
+- name: Copy netplan configuration
   ansible.builtin.template:
     src: 01-netcfg.yaml.j2
     dest: "/etc/netplan/{{ set_netplan_config_file }}"
     owner: root
     group: root
     mode: "0600"
-    backup: true
-  register: set_netplan_config
-
-- name: Validate netplan configuration before applying
-  ansible.builtin.command: netplan generate
-  when: set_netplan_config.changed
-  register: set_netplan_validate
-  changed_when: false
-  failed_when: false
-
-- name: Fail if netplan validation failed
-  ansible.builtin.fail:
-    msg: "Netplan validation failed, previous config restored"
-  when:
-    - set_netplan_config.changed
-    - set_netplan_validate.rc != 0
-
-- name: Apply netplan configuration
-  ansible.builtin.command: netplan apply
-  when:
-    - set_netplan_config.changed
-    - set_netplan_validate.rc == 0
-  changed_when: set_netplan_config.changed
-
-- name: Wait for SSH after network reconfiguration
-  ansible.builtin.wait_for_connection:
-    delay: 5
-    timeout: 60
-  when:
-    - set_netplan_config.changed
-    - set_netplan_validate.rc == 0
+  notify:
+    - Validate netplan configuration
+    - Apply netplan configuration

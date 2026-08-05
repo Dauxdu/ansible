@@ -75,7 +75,9 @@
   loop: "{{ (set_docker_sudo | default([])) + (set_docker_deploy | default([])) }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.name is defined | length > 0
+  when:
+    - item.name is defined
+    - item.name | length > 0
 
 - name: Configure Docker registry authentication
   when:
@@ -102,10 +104,9 @@
         owner: "{{ item.name }}"
         group: "{{ item.name }}"
         mode: "0600"
-      loop: "{{ set_docker_deploy | default([]) }}"
+      loop: "{{ set_docker_deploy | default([]) | selectattr('name', 'defined') | list }}"
       loop_control:
         label: "{{ item.name }}"
-      when: item.name is defined
 
     - name: Create Docker config directory for root
       ansible.builtin.file:

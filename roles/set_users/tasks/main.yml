@@ -59,11 +59,7 @@
 - name: Configure restricted sudo for deploy users
   ansible.builtin.copy:
     dest: "/etc/sudoers.d/{{ item.name }}"
-    content: |
-      {{ item.name }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl, \
-                                          /usr/bin/docker stack *, \
-                                          /usr/bin/docker service *, \
-                                          /usr/bin/docker ps *
+    content: "{{ item.name }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl, /usr/bin/docker stack *, /usr/bin/docker service *, /usr/bin/docker ps *\n"
     owner: root
     group: root
     mode: "0440"

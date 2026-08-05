@@ -1,5 +1,10 @@
 ---
-- name: Restart networking
-  ansible.builtin.systemd:
-    name: systemd-networkd
-    state: restarted
+- name: Validate netplan configuration
+  ansible.builtin.command:
+    cmd: netplan generate
+  changed_when: false
+
+- name: Apply netplan configuration
+  ansible.builtin.command:
+    cmd: netplan apply
+  changed_when: true

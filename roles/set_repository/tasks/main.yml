@@ -13,9 +13,4 @@
     - set_repository_apt_urls | default([]) | length > 0
     - set_repository_repositories | default([]) | length > 0
   register: set_repository_apt_custom_repositories
-
-- name: Update APT cache after repository change
-  ansible.builtin.apt:
-    update_cache: true
-    cache_valid_time: 0
-  when: set_repository_apt_custom_repositories is changed
+  notify: Update APT cache
