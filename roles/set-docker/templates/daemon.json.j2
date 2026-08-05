@@ -1,0 +1,17 @@
+{
+  "log-driver": "{{ docker_log_driver }}",
+  "log-opts": {
+    "max-size": "{{ docker_log_max_size }}",
+    "max-file": "{{ docker_log_max_file }}"
+  },
+  "storage-driver": "{{ docker_storage_driver }}",
+  "default-address-pools": [
+{% for pool in docker_default_address_pools %}
+    {
+      "base": "{{ pool.base }}",
+      "size": {{ pool.size }}
+    }{% if not loop.last %},{% endif %}
+{% endfor %}
+  ],
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}

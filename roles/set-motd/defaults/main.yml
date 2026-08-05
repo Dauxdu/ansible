@@ -1,0 +1,8 @@
+---
+motd_show_hostname: true
+motd_show_os: true
+motd_show_kernel: true
+motd_show_uptime: true
+motd_show_cpu: true
+motd_show_memory: true
+motd_show_disk: true

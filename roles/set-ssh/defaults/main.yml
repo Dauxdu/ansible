@@ -1,0 +1,11 @@
+---
+ssh_port: 22
+ssh_permit_root_login: "no"
+ssh_password_authentication: "no"
+ssh_pubkey_authentication: "yes"
+ssh_permit_empty_passwords: "no"
+ssh_ciphers: "chacha20-poly1305@openssh.com,aes256-gcm@openssh.com"
+ssh_macs: "hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com"
+ssh_max_auth_tries: 3
+ssh_client_alive_interval: 300
+ssh_client_alive_count_max: 2

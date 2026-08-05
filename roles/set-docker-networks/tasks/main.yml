@@ -1,0 +1,14 @@
+---
+- name: Ensure overlay networks exist
+  community.docker.docker_network:
+    name: "{{ item.name }}"
+    driver: overlay
+    attachable: true
+    internal: "{{ item.internal | default(false) }}"
+    scope: swarm
+    driver_options: "{{ {'encrypted': 'true'} if item.encrypted | default(false) else omit }}"
+    state: present
+  loop: "{{ docker_overlay_networks }}"
+  when: docker_overlay_networks | length > 0
+  delegate_to: "{{ groups['swarm_managers'] | first }}"
+  run_once: true

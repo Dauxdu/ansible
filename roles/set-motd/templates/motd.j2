@@ -1,0 +1,49 @@
+#!/bin/bash
+# {{ ansible_managed }}
+
+HOSTNAME=$(hostname)
+{% if motd_show_os %}
+OS=$(lsb_release -d 2>/dev/null | cut -f2 || cat /etc/os-release | grep PRETTY_NAME | cut -d'"' -f2)
+{% endif %}
+{% if motd_show_kernel %}
+KERNEL=$(uname -r)
+{% endif %}
+{% if motd_show_uptime %}
+UPTIME=$(uptime -p | sed 's/up //')
+{% endif %}
+{% if motd_show_cpu %}
+CPU_CORES=$(nproc)
+{% endif %}
+{% if motd_show_memory %}
+MEMORY_TOTAL=$(free -h | grep Mem | awk '{print $2}')
+MEMORY_FREE=$(free -h | grep Mem | awk '{print $4}')
+{% endif %}
+{% if motd_show_disk %}
+DISK_TOTAL=$(df -h / | grep / | awk '{print $2}')
+DISK_FREE=$(df -h / | grep / | awk '{print $4}')
+{% endif %}
+
+echo "----------------------------------------------"
+{% if motd_show_hostname %}
+echo "  Welcome to $HOSTNAME"
+{% endif %}
+echo "----------------------------------------------"
+{% if motd_show_os %}
+echo "  OS: $OS"
+{% endif %}
+{% if motd_show_kernel %}
+echo "  Kernel: $KERNEL"
+{% endif %}
+{% if motd_show_uptime %}
+echo "  Uptime: $UPTIME"
+{% endif %}
+{% if motd_show_cpu %}
+echo "  CPU: $CPU_CORES cores"
+{% endif %}
+{% if motd_show_memory %}
+echo "  Memory: $MEMORY_TOTAL total, $MEMORY_FREE free"
+{% endif %}
+{% if motd_show_disk %}
+echo "  Disk: $DISK_TOTAL total, $DISK_FREE free"
+{% endif %}
+echo "----------------------------------------------"

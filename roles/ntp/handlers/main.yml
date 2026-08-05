@@ -1,5 +1,0 @@
----
-- name: restart ntp
-  systemd:
-    name: "{{ 'ntp' if ansible_os_family == 'Debian' else 'ntpd' }}"
-    state: restarted

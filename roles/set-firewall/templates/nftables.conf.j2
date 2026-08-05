@@ -1,0 +1,51 @@
+#!/usr/sbin/nft -f
+# {{ ansible_managed }}
+
+table inet firewall
+flush table inet firewall
+
+table inet firewall {
+    chain input {
+        type filter hook input priority filter; policy drop;
+
+        # Loopback
+        iifname "lo" accept
+
+        # Established and related connections
+        ct state established,related accept
+        ct state invalid drop
+
+        # ICMP
+        ip protocol icmp accept
+        ip6 nexthdr ipv6-icmp accept
+
+        # SSH
+        tcp dport {{ ssh_port }} accept;
+
+        # Include additional rules
+        include "/etc/nftables.d/*.nft";
+    }
+
+    chain forward {
+        type filter hook forward priority filter; policy drop;
+
+        # Established connections
+        ct state established,related accept
+
+        # Docker bridge networks
+        iifname "docker0" accept
+        oifname "docker0" accept
+
+        # Docker Swarm overlay networks
+        iifname "br-*" accept
+        oifname "br-*" accept
+
+        # Docker gateway bridge
+        iifname "docker_gwbridge" accept
+        oifname "docker_gwbridge" accept
+    }
+
+    chain output {
+        type filter hook output priority filter; policy accept;
+    }
+}

@@ -1,0 +1,21 @@
+---
+- name: Configure APT repositories
+  ansible.builtin.deb822_repository:
+    name: custom-repo
+    types: deb
+    uris: "{{ apt_urls }}"
+    suites: "{{ apt_repositories }}"
+    components:
+      - main
+      - universe
+    state: present
+  when:
+    - apt_urls | default([]) | length > 0
+    - apt_repositories | default([]) | length > 0
+  register: apt_custom_repositories
+
+- name: Update APT cache after repository change
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 0
+  when: apt_custom_repositories is changed

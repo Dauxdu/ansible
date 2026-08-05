@@ -1,0 +1,5 @@
+---
+- name: Reload nftables
+  ansible.builtin.shell: |
+    nft delete table inet firewall 2>/dev/null || true
+    nft -f /etc/nftables.conf

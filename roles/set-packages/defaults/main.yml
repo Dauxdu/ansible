@@ -1,0 +1,19 @@
+---
+apt_packages:
+  - ca-certificates
+  - gnupg
+  - qemu-guest-agent
+  - unattended-upgrades
+  - curl
+  - wget
+  - net-tools
+  - nano
+  - mc
+  - unzip
+  - jq
+  - htop
+  - python3-apt
+  - python3-pip
+  - git
+
+apt_packages_remove: []

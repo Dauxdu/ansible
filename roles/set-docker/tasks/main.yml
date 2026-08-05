@@ -1,0 +1,119 @@
+---
+- name: Install Docker prerequisites
+  ansible.builtin.apt:
+    name:
+      - curl
+      - gnupg
+      - python3-docker
+      - python3-debian
+      - ca-certificates
+    state: present
+    update_cache: true
+
+- name: Create apt keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Docker GPG key
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+    force: false
+
+- name: Add Docker repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types:
+      - deb
+    uris:
+      - https://download.docker.com/linux/ubuntu
+    suites:
+      - "{{ ansible_facts.distribution_release }}"
+    components:
+      - stable
+    architectures:
+      - "{{ docker_arch_map[ansible_facts.architecture] | default(ansible_facts.architecture) }}"
+    signed_by: /etc/apt/keyrings/docker.asc
+    state: present
+
+- name: Install Docker Engine
+  ansible.builtin.apt:
+    name: "{{ docker_packages }}"
+    state: present
+    update_cache: true
+  notify: Restart docker
+
+- name: Configure Docker daemon
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  notify: Restart docker
+
+- name: Enable and start Docker service
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Ensure docker group exists
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Add users to docker group
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: docker
+    append: true
+  loop: "{{ (sudo_users | default([])) + (deploy_users | default([])) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.name is defined
+
+- name: Configure Docker registry authentication
+  when:
+    - docker_registries | default([]) | length > 0
+    - docker_username | default('') | length > 0
+    - docker_password | default('') | length > 0
+  block:
+    - name: Create Docker config directory for deploy users
+      ansible.builtin.file:
+        path: "/home/{{ item.name }}/.docker"
+        state: directory
+        owner: "{{ item.name }}"
+        group: "{{ item.name }}"
+        mode: "0700"
+      loop: "{{ deploy_users | default([]) | selectattr('name', 'defined') | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Configure Docker registry authentication for deploy users
+      ansible.builtin.template:
+        src: config.json.j2
+        dest: "/home/{{ item.name }}/.docker/config.json"
+        owner: "{{ item.name }}"
+        group: "{{ item.name }}"
+        mode: "0600"
+      loop: "{{ deploy_users | default([]) }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: item.name is defined
+
+    - name: Create Docker config directory for root
+      ansible.builtin.file:
+        path: /root/.docker
+        state: directory
+        mode: "0700"
+
+    - name: Configure Docker registry authentication for root
+      ansible.builtin.template:
+        src: config.json.j2
+        dest: /root/.docker/config.json
+        mode: "0600"

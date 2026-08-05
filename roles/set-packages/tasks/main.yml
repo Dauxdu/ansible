@@ -1,0 +1,33 @@
+---
+- name: Update APT cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install base utility packages
+  ansible.builtin.apt:
+    name: "{{ apt_packages }}"
+    state: present
+  register: package_install
+  retries: 3
+  delay: 5
+  until: package_install is success
+
+- name: Enable unattended security upgrades
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::Download-Upgradeable-Packages "1";
+      APT::Periodic::AutocleanInterval "7";
+
+- name: Remove unwanted packages
+  ansible.builtin.apt:
+    name: "{{ apt_packages_remove }}"
+    state: absent
+    purge: true
+  when: apt_packages_remove is defined

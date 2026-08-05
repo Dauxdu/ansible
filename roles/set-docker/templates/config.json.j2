@@ -1,0 +1,9 @@
+{
+  "auths": {
+{% for registry in docker_registries %}
+    "{{ registry }}": {
+      "auth": "{{ (docker_username ~ ':' ~ docker_password) | b64encode }}"
+    }{% if not loop.last %},{% endif %}
+{% endfor %}
+  }
+}

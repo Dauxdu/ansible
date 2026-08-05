@@ -1,0 +1,59 @@
+---
+- name: Disable cloud-init network management
+  ansible.builtin.copy:
+    dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+    content: |
+      network:
+        config: disabled
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Remove cloud-init generated netplan configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/netplan/00-installer-config.yaml
+    - /etc/netplan/00-installer-config.yml
+    - /etc/netplan/50-cloud-init.yaml
+    - /etc/netplan/50-cloud-init.yml
+
+- name: Deploy netplan configuration
+  ansible.builtin.template:
+    src: 01-netcfg.yaml.j2
+    dest: "/etc/netplan/{{ netplan_config_file }}"
+    owner: root
+    group: root
+    mode: "0600"
+    backup: true
+  register: netplan_config
+
+- name: Validate netplan configuration before applying
+  ansible.builtin.command: netplan generate
+  when: netplan_config.changed
+  register: netplan_validate
+  changed_when: false
+  failed_when: false
+
+- name: Fail if netplan validation failed
+  ansible.builtin.fail:
+    msg: "Netplan validation failed, previous config restored"
+  when:
+    - netplan_config.changed
+    - netplan_validate.rc != 0
+
+- name: Apply netplan configuration
+  ansible.builtin.command: netplan apply
+  when:
+    - netplan_config.changed
+    - netplan_validate.rc == 0
+  changed_when: netplan_config.changed
+
+- name: Wait for SSH after network reconfiguration
+  ansible.builtin.wait_for_connection:
+    delay: 5
+    timeout: 60
+  when:
+    - netplan_config.changed
+    - netplan_validate.rc == 0

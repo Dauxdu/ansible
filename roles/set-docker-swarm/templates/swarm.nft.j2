@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+
+# Docker Swarm firewall rules
+
+define swarm_nodes = { {{ groups['all'] | map('extract', hostvars, 'ansible_host') | unique | join(', ') }} }
+
+# Swarm manager API
+ip saddr $swarm_nodes tcp dport 2377 accept;
+
+# Swarm node communication (TCP and UDP)
+ip saddr $swarm_nodes tcp dport 7946 accept;
+ip saddr $swarm_nodes udp dport 7946 accept;
+
+# Overlay network traffic
+ip saddr $swarm_nodes udp dport 4789 accept;
+
+# ISAKMP / IKE (для обмена ключами шифрования Swarm)
+ip saddr $swarm_nodes udp dport 500 accept;
+
+# IPsec ESP и AH протоколы (для самого зашифрованного трафика)
+ip saddr $swarm_nodes ip protocol esp accept;
+ip saddr $swarm_nodes ip protocol ah accept;

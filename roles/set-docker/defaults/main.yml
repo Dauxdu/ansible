@@ -1,0 +1,29 @@
+---
+docker_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+# Docker registry authentication
+docker_registries: []
+docker_username: ""
+docker_password: ""
+
+# Docker daemon configuration
+docker_log_driver: "json-file"
+docker_log_max_size: "100m"
+docker_log_max_file: "5"
+docker_storage_driver: "overlay2"
+
+# Default address pools для Swarm overlay сетей
+docker_default_address_pools:
+  - base: "172.30.0.0/16"
+    size: 24
+  - base: "172.31.0.0/16"
+    size: 24
