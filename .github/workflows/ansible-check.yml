@@ -28,7 +28,6 @@ concurrency:
 env:
   PY_COLORS: "1"
   ANSIBLE_FORCE_COLOR: "1"
-  ANSIBLE_HOME: "${{ runner.temp }}/.ansible"
 
 jobs:
   lint:
