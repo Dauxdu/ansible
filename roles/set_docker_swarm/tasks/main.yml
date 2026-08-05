@@ -22,7 +22,7 @@
 - name: Check Swarm status on primary manager
   ansible.builtin.command:
     cmd: docker info --format '{{ "{{ .Swarm.LocalNodeState }}" }}'
-  register: swarm_status_primary
+  register: set_docker_swarm_status_primary
   changed_when: false
   failed_when: false
   when: inventory_hostname == groups['swarm_managers'][0]
@@ -32,22 +32,22 @@
     cmd: docker swarm init --advertise-addr {{ ip_address }}
   when:
     - inventory_hostname == groups['swarm_managers'][0]
-    - swarm_status_primary.stdout is defined
-    - swarm_status_primary.stdout | trim == "inactive"
-  register: swarm_init_result
+    - set_docker_swarm_status_primary.stdout is defined
+    - set_docker_swarm_status_primary.stdout | trim == "inactive"
+  register: set_docker_swarm_init_result
 
 - name: Wait for Swarm API to be ready after initialization
   ansible.builtin.command:
     cmd: docker info --format '{{ "{{ .Swarm.LocalNodeState }}" }}'
-  register: swarm_wait
-  until: swarm_wait.stdout | trim == "active"
+  register: set_docker_swarm_wait
+  until: set_docker_swarm_wait.stdout | trim == "active"
   retries: 10
   delay: 3
   changed_when: false
   when:
     - inventory_hostname == groups['swarm_managers'][0]
-    - swarm_init_result is defined
-    - swarm_init_result.changed
+    - set_docker_swarm_init_result is defined
+    - set_docker_swarm_init_result.changed
 
 # ======================
 # GET TOKENS
@@ -56,7 +56,7 @@
 - name: Get Swarm worker token
   ansible.builtin.command:
     cmd: docker swarm join-token -q worker
-  register: swarm_worker_token_result
+  register: set_docker_swarm_worker_token_result
   changed_when: false
   when: inventory_hostname == groups['swarm_managers'][0]
   no_log: true
@@ -64,7 +64,7 @@
 - name: Get Swarm manager token
   ansible.builtin.command:
     cmd: docker swarm join-token -q manager
-  register: swarm_manager_token_result
+  register: set_docker_swarm_manager_token_result
   changed_when: false
   when: inventory_hostname == groups['swarm_managers'][0]
   no_log: true
@@ -73,16 +73,15 @@
 # PROPAGATE TOKENS TO ALL HOSTS
 # ======================
 
-# roles/set-docker-swarm/tasks/main.yml
 - name: Set Swarm tokens as facts for all hosts
   vars:
     swarm_primary: "{{ groups['swarm_managers'] | first }}"
-    swarm_primary_worker_token: "{{ hostvars[swarm_primary].swarm_worker_token_result.stdout | default('') | trim }}"
-    swarm_primary_manager_token: "{{ hostvars[swarm_primary].swarm_manager_token_result.stdout | default('') | trim }}"
+    swarm_primary_worker_token: "{{ hostvars[swarm_primary].set_docker_swarm_worker_token_result.stdout | default('') | trim }}"
+    swarm_primary_manager_token: "{{ hostvars[swarm_primary].set_docker_swarm_manager_token_result.stdout | default('') | trim }}"
   ansible.builtin.set_fact:
-    swarm_worker_token: "{{ swarm_primary_worker_token }}"
-    swarm_manager_token: "{{ swarm_primary_manager_token }}"
-    swarm_advertise_addr: "{{ hostvars[swarm_primary].ip_address }}"
+    set_docker_swarm_worker_token: "{{ swarm_primary_worker_token }}"
+    set_docker_swarm_manager_token: "{{ swarm_primary_manager_token }}"
+    set_docker_swarm_advertise_addr: "{{ hostvars[swarm_primary].ip_address }}"
   when:
     - swarm_primary_worker_token | length > 0
     - swarm_primary_manager_token | length > 0
@@ -95,7 +94,7 @@
 - name: Check Swarm status on all nodes
   ansible.builtin.command:
     cmd: docker info --format '{{ "{{ .Swarm.LocalNodeState }}" }}'
-  register: swarm_status
+  register: set_docker_swarm_status
   changed_when: false
   failed_when: false
 
@@ -105,13 +104,13 @@
 
 - name: Join secondary managers to Swarm
   ansible.builtin.command:
-    cmd: docker swarm join --token {{ swarm_manager_token }} {{ swarm_advertise_addr }}:2377
+    cmd: docker swarm join --token {{ set_docker_swarm_manager_token }} {{ set_docker_swarm_advertise_addr }}:2377
   when:
     - inventory_hostname in groups['swarm_managers']
     - inventory_hostname != groups['swarm_managers'][0]
-    - swarm_status.stdout is defined
-    - swarm_status.stdout | trim == "inactive"
-    - swarm_manager_token is defined
+    - set_docker_swarm_status.stdout is defined
+    - set_docker_swarm_status.stdout | trim == "inactive"
+    - set_docker_swarm_manager_token is defined
 
 # ======================
 # JOIN WORKERS
@@ -119,9 +118,9 @@
 
 - name: Join workers to Swarm
   ansible.builtin.command:
-    cmd: docker swarm join --token {{ swarm_worker_token }} {{ swarm_advertise_addr }}:2377
+    cmd: docker swarm join --token {{ set_docker_swarm_worker_token }} {{ set_docker_swarm_advertise_addr }}:2377
   when:
     - inventory_hostname in groups['swarm_workers']
-    - swarm_status.stdout is defined
-    - swarm_status.stdout | trim == "inactive"
-    - swarm_worker_token is defined
+    - set_docker_swarm_status.stdout is defined
+    - set_docker_swarm_status.stdout | trim == "inactive"
+    - set_docker_swarm_worker_token is defined
