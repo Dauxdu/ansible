@@ -1,12 +1,12 @@
 {
-  "log-driver": "{{ docker_log_driver }}",
+  "log-driver": "{{ set_docker_log_driver }}",
   "log-opts": {
-    "max-size": "{{ docker_log_max_size }}",
-    "max-file": "{{ docker_log_max_file }}"
+    "max-size": "{{ set_docker_log_max_size }}",
+    "max-file": "{{ set_docker_log_max_file }}"
   },
-  "storage-driver": "{{ docker_storage_driver }}",
+  "storage-driver": "{{ set_docker_storage_driver }}",
   "default-address-pools": [
-{% for pool in docker_default_address_pools %}
+{% for pool in set_docker_default_address_pools %}
     {
       "base": "{{ pool.base }}",
       "size": {{ pool.size }}

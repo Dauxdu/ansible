@@ -35,13 +35,13 @@
     components:
       - stable
     architectures:
-      - "{{ docker_arch_map[ansible_facts.architecture] | default(ansible_facts.architecture) }}"
+      - "{{ set_docker_arch_map[ansible_facts.architecture] | default(ansible_facts.architecture) }}"
     signed_by: /etc/apt/keyrings/docker.asc
     state: present
 
 - name: Install Docker Engine
   ansible.builtin.apt:
-    name: "{{ docker_packages }}"
+    name: "{{ set_docker_packages }}"
     state: present
     update_cache: true
   notify: Restart docker
@@ -72,16 +72,17 @@
     name: "{{ item.name }}"
     groups: docker
     append: true
-  loop: "{{ (sudo_users | default([])) + (deploy_users | default([])) }}"
+  loop: "{{ (set_docker_sudo | default([])) + (set_docker_deploy | default([])) }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.name is defined
+  when: item.name is defined | length > 0
 
 - name: Configure Docker registry authentication
   when:
-    - docker_registries | default([]) | length > 0
-    - docker_username | default('') | length > 0
-    - docker_password | default('') | length > 0
+    - set_docker_deploy | default([]) | length > 0
+    - set_docker_registries | default([]) | length > 0
+    - set_docker_username | default('') | length > 0
+    - set_docker_password | default('') | length > 0
   block:
     - name: Create Docker config directory for deploy users
       ansible.builtin.file:
@@ -90,7 +91,7 @@
         owner: "{{ item.name }}"
         group: "{{ item.name }}"
         mode: "0700"
-      loop: "{{ deploy_users | default([]) | selectattr('name', 'defined') | list }}"
+      loop: "{{ set_docker_deploy | default([]) | selectattr('name', 'defined') | list }}"
       loop_control:
         label: "{{ item.name }}"
 
@@ -101,7 +102,7 @@
         owner: "{{ item.name }}"
         group: "{{ item.name }}"
         mode: "0600"
-      loop: "{{ deploy_users | default([]) }}"
+      loop: "{{ set_docker_deploy | default([]) }}"
       loop_control:
         label: "{{ item.name }}"
       when: item.name is defined

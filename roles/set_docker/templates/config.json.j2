@@ -1,8 +1,8 @@
 {
   "auths": {
-{% for registry in docker_registries %}
+{% for registry in set_docker_registries %}
     "{{ registry }}": {
-      "auth": "{{ (docker_username ~ ':' ~ docker_password) | b64encode }}"
+      "auth": "{{ (set_docker_username ~ ':' ~ set_docker_password) | b64encode }}"
     }{% if not loop.last %},{% endif %}
 {% endfor %}
   }
