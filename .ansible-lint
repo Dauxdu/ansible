@@ -9,6 +9,7 @@ exclude_paths:
   - .ansible/
   - .yamllint.yml
   - .ansible-lint.yml
+  - collections/
 
 warn_list:
   - command-instead-of-shell
