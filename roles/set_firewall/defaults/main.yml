@@ -1,2 +1,2 @@
 ---
-ssh_port: 22
+set_firewall_ssh_port: 22
