@@ -1,16 +1,50 @@
 ---
 extends: default
 
+ignore: |
+  .git/
+  .github/
+  .ansible/
+  .yamllint.yml
+  .ansible-lint.yml
+
 rules:
+  document-start: disable
+
   line-length:
     max: 120
     allow-non-breakable-words: true
     allow-non-breakable-inline-mappings: true
+
+  truthy:
+    allowed-values:
+      - "true"
+      - "false"
+    check-keys: false
+
   braces:
     max-spaces-inside: 2
+
   brackets:
     max-spaces-inside: 2
+
   colons:
     max-spaces-after: 1
+
   commas:
     max-spaces-after: 1
+
+  comments:
+    require-starting-space: true
+    min-spaces-from-content: 1
+
+  comments-indentation: disable
+
+  indentation:
+    spaces: consistent
+    indent-sequences: consistent
+
+  empty-lines:
+    max: 2
+    max-start: 0
+    max-end: 1

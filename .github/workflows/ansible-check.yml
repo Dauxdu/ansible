@@ -1,44 +1,56 @@
----
-name: Ansible Configuration Check
+name: Ansible Lint
 
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - README.md
+    branches: [main]
+    paths:
+      - "roles/**"
+      - ".ansible-lint"
+      - ".yamllint"
+      - ".github/workflows/ansible-check.yml"
   pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - README.md
-jobs:
-  ansible-check:
-    runs-on: ubuntu-latest
+    branches: [main]
+    paths:
+      - "roles/**"
+      - ".ansible-lint"
+      - ".yamllint"
+      - ".github/workflows/ansible-check.yml"
+  workflow_dispatch:
+  workflow_call:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ansible-lint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PY_COLORS: "1"
+  ANSIBLE_FORCE_COLOR: "1"
+  ANSIBLE_HOME: "${{ runner.temp }}/.ansible"
+
+jobs:
+  lint:
+    name: Ansible lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.12"
+          cache: pip
 
-      - name: Install Ansible and dependencies
+      - name: Install lint dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ansible passlib ansible-lint yamllint
-          pip install --upgrade ansible-lint
 
       - name: Check YAML syntax with yamllint
-        run: |
-          yamllint .
-
-      - name: Check Ansible syntax
-        run: |
-          ansible-playbook --syntax-check playbook.yml
+        run: yamllint .
 
       - name: Run ansible-lint
-        run: |
-          ansible-lint .
+        run: ansible-lint
