@@ -22,17 +22,17 @@
 - name: Deploy netplan configuration
   ansible.builtin.template:
     src: 01-netcfg.yaml.j2
-    dest: "/etc/netplan/{{ netplan_config_file }}"
+    dest: "/etc/netplan/{{ set_netplan_config_file }}"
     owner: root
     group: root
     mode: "0600"
     backup: true
-  register: netplan_config
+  register: set_netplan_config
 
 - name: Validate netplan configuration before applying
   ansible.builtin.command: netplan generate
-  when: netplan_config.changed
-  register: netplan_validate
+  when: set_netplan_config.changed
+  register: set_netplan_validate
   changed_when: false
   failed_when: false
 
@@ -40,20 +40,20 @@
   ansible.builtin.fail:
     msg: "Netplan validation failed, previous config restored"
   when:
-    - netplan_config.changed
-    - netplan_validate.rc != 0
+    - set_netplan_config.changed
+    - set_netplan_validate.rc != 0
 
 - name: Apply netplan configuration
   ansible.builtin.command: netplan apply
   when:
-    - netplan_config.changed
-    - netplan_validate.rc == 0
-  changed_when: netplan_config.changed
+    - set_netplan_config.changed
+    - set_netplan_validate.rc == 0
+  changed_when: set_netplan_config.changed
 
 - name: Wait for SSH after network reconfiguration
   ansible.builtin.wait_for_connection:
     delay: 5
     timeout: 60
   when:
-    - netplan_config.changed
-    - netplan_validate.rc == 0
+    - set_netplan_config.changed
+    - set_netplan_validate.rc == 0
