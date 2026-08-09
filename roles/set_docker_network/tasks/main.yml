@@ -9,6 +9,5 @@
     driver_options: "{{ {'encrypted': 'true'} if item.encrypted | default(false) else omit }}"
     state: present
   loop: "{{ set_docker_network_overlay }}"
-  when: set_docker_network_overlay | length > 0
   delegate_to: "{{ groups['swarm_managers'] | first }}"
   run_once: true

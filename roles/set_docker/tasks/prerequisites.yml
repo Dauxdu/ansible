@@ -1,0 +1,12 @@
+---
+- name: Install Docker prerequisite packages
+  ansible.builtin.apt:
+    name: "{{ set_docker_prerequisites }}"
+    state: present
+    update_cache: true
+
+- name: Create apt keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"

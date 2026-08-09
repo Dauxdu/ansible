@@ -1,15 +1,14 @@
 # {{ ansible_managed }}
-
 network:
   version: 2
   renderer: networkd
   ethernets:
-    {{ network_interface }}:
-      dhcp4: {{ dhcp }}
+    {{ set_netplan_interface }}:
+      dhcp4: {{ set_netplan_dhcp | bool | to_json }}
       addresses:
-        - {{ ip_address }}/{{ subnet_mask }}
+        - {{ set_netplan_ip_address }}/{{ set_netplan_subnet_mask }}
       routes:
         - to: default
-          via: {{ gateway }}
+          via: {{ set_netplan_gateway }}
       nameservers:
-        addresses: {{ dns_servers | to_json }}
+        addresses: {{ set_netplan_dns_servers | to_json }}

@@ -4,19 +4,10 @@
     name: "{{ set_hostname_name }}"
     use: systemd
   when: ansible_facts.hostname != set_hostname_name
-  register: set_hostname_result
 
-- name: Ensure /etc/hosts has localhost hostname mapping
+- name: Ensure localhost hostname mapping in /etc/hosts
   ansible.builtin.lineinfile:
     path: /etc/hosts
     regexp: '^127\.0\.1\.1'
     line: "127.0.1.1 {{ set_hostname_name }}"
     state: present
-
-- name: Ensure hostname is in /etc/hosts
-  ansible.builtin.lineinfile:
-    path: /etc/hosts
-    regexp: "^{{ ip_address }}"
-    line: "{{ ip_address }} {{ set_hostname_name }}"
-    state: present
-  when: ip_address is defined

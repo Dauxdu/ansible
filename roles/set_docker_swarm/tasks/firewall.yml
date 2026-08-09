@@ -1,0 +1,12 @@
+---
+- name: Deploy Docker Swarm firewall rules
+  ansible.builtin.template:
+    src: swarm.nft.j2
+    dest: /etc/nftables.d/swarm.nft
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload nftables
+
+- name: Flush handlers to apply firewall rules immediately
+  ansible.builtin.meta: flush_handlers

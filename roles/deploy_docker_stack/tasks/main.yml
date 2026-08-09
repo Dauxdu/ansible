@@ -1,0 +1,6 @@
+---
+- name: Generate compose file for stack
+  ansible.builtin.import_tasks: generate.yml
+
+- name: Deploy and verify Docker stack
+  ansible.builtin.import_tasks: deploy.yml

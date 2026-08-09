@@ -1,0 +1,7 @@
+---
+# Обязательные переменные (передаются через vars при include_role):
+# stack_name: ""
+# stack_compose_path: ""
+stack_compose_mode: "0640"
+stack_deploy_timeout: 120
+stack_prune: true

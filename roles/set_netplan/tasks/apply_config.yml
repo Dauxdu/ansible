@@ -1,0 +1,11 @@
+---
+- name: Deploy netplan configuration
+  ansible.builtin.template:
+    src: 01-netcfg.yaml.j2
+    dest: "/etc/netplan/{{ set_netplan_config_file }}"
+    owner: root
+    group: root
+    mode: "0600"
+  notify:
+    - Validate netplan configuration
+    - Apply netplan configuration

@@ -8,10 +8,10 @@
   ansible.builtin.apt:
     name: "{{ set_packages_apt }}"
     state: present
-  register: set_packages_package_install
+  register: set_packages_install_result
   retries: 3
   delay: 5
-  until: set_packages_package_install is success
+  until: set_packages_install_result is success
 
 - name: Enable unattended security upgrades
   ansible.builtin.copy:
@@ -30,4 +30,4 @@
     name: "{{ set_packages_apt_remove }}"
     state: absent
     purge: true
-  when: set_packages_apt_remove is defined
+  when: set_packages_apt_remove | length > 0

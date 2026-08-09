@@ -1,9 +1,6 @@
 ---
 set_users_sudo_groups:
   - sudo
-
 set_users_deploy_groups: []
-
 set_users_sudo: []
-
 set_users_deploy: []

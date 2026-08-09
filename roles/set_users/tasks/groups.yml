@@ -1,0 +1,19 @@
+---
+- name: Ensure sudo package is installed
+  ansible.builtin.apt:
+    name: sudo
+    state: present
+    cache_valid_time: 3600
+
+- name: Create sudo user groups
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ set_users_sudo_groups }}"
+
+- name: Create deploy user groups
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ set_users_deploy_groups }}"
+  when: set_users_deploy_groups | length > 0

@@ -1,0 +1,22 @@
+---
+- name: "Deploy Docker stack '{{ stack_name }}'"
+  ansible.builtin.command:
+    cmd: >-
+      docker stack deploy
+      -c {{ stack_compose_path }}
+      {% if stack_prune %}--prune{% endif %}
+      --with-registry-auth
+      {{ stack_name }}
+  register: stack_deploy_result
+  changed_when: >-
+    'Creating service' in stack_deploy_result.stdout
+    or 'Updating service' in stack_deploy_result.stdout
+  delegate_to: "{{ groups['swarm_managers'] | first }}"
+  run_once: true
+
+- name: "Display deploy result for '{{ stack_name }}'"
+  ansible.builtin.debug:
+    var: stack_deploy_result.stdout_lines
+  delegate_to: "{{ groups['swarm_managers'] | first }}"
+  run_once: true
+  when: stack_deploy_result.stdout_lines is defined

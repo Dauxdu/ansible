@@ -1,0 +1,23 @@
+---
+- name: Download Docker GPG key
+  ansible.builtin.get_url:
+    url: "{{ set_docker_repo_key_url }}"
+    dest: "{{ set_docker_repo_keyring }}"
+    mode: "0644"
+    force: false
+
+- name: Add Docker APT repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types:
+      - deb
+    uris:
+      - "{{ set_docker_repo_url }}"
+    suites:
+      - "{{ ansible_facts.distribution_release }}"
+    components:
+      - stable
+    architectures:
+      - "{{ set_docker_arch_map[ansible_facts.architecture] | default(ansible_facts.architecture) }}"
+    signed_by: "{{ set_docker_repo_keyring }}"
+    state: present

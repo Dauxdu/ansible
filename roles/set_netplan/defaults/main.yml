@@ -1,2 +1,8 @@
 ---
 set_netplan_config_file: "01-netcfg.yaml"
+set_netplan_interface: "{{ network_interface }}"
+set_netplan_dhcp: "{{ dhcp | default(false) }}"
+set_netplan_ip_address: "{{ ip_address }}"
+set_netplan_subnet_mask: "{{ subnet_mask | default(24) }}"
+set_netplan_gateway: "{{ gateway }}"
+set_netplan_dns_servers: "{{ dns_servers | default([gateway]) }}"

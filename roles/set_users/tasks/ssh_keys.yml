@@ -1,0 +1,21 @@
+---
+- name: Manage SSH keys for sudo users
+  ansible.posix.authorized_key:
+    user: "{{ item.name }}"
+    state: present
+    key: "{{ item.ssh_public_key }}"
+    exclusive: false
+  loop: "{{ set_users_sudo }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Manage SSH keys for deploy users
+  ansible.posix.authorized_key:
+    user: "{{ item.name }}"
+    state: present
+    key: "{{ item.ssh_public_key }}"
+    exclusive: false
+  loop: "{{ set_users_deploy }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: set_users_deploy | length > 0

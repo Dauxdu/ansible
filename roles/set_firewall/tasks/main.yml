@@ -7,7 +7,7 @@
 
 - name: Create nftables rules directory
   ansible.builtin.file:
-    path: "/etc/nftables.d"
+    path: /etc/nftables.d
     state: directory
     owner: root
     group: root

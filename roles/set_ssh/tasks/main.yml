@@ -29,7 +29,7 @@
     - regexp: "^#?MACs"
       line: "MACs {{ set_ssh_macs }}"
     - regexp: "^#?X11Forwarding"
-      line: "X11Forwarding no"
+      line: "X11Forwarding {{ set_ssh_x11_forwarding }}"
     - regexp: "^#?MaxAuthTries"
       line: "MaxAuthTries {{ set_ssh_max_auth_tries }}"
     - regexp: "^#?ClientAliveInterval"
@@ -38,7 +38,7 @@
       line: "ClientAliveCountMax {{ set_ssh_client_alive_count_max }}"
   notify: Restart SSH
 
-- name: Ensure SSH service is enabled
+- name: Ensure SSH service is enabled and running
   ansible.builtin.systemd:
     name: ssh
     enabled: true

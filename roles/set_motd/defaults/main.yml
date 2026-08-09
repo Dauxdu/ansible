@@ -6,3 +6,7 @@ set_motd_show_uptime: true
 set_motd_show_cpu: true
 set_motd_show_memory: true
 set_motd_show_disk: true
+set_motd_remove_scripts:
+  - /etc/update-motd.d/10-help-text
+  - /etc/update-motd.d/50-motd-news
+  - /etc/update-motd.d/91-release-upgrade

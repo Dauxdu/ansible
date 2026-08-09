@@ -1,0 +1,27 @@
+---
+- name: Create sudo users
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    state: present
+    groups: "{{ set_users_sudo_groups | join(',') }}"
+    append: true
+    shell: /bin/bash
+    create_home: true
+    password_lock: false
+  loop: "{{ set_users_sudo }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Create deploy users
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    state: present
+    groups: "{{ set_users_deploy_groups | join(',') }}"
+    append: true
+    shell: /bin/bash
+    create_home: true
+    password_lock: true
+  loop: "{{ set_users_deploy }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: set_users_deploy | length > 0

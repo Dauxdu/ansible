@@ -1,0 +1,32 @@
+---
+- name: Check Swarm status on current node
+  ansible.builtin.command:
+    cmd: docker info --format '{{ "{{ .Swarm.LocalNodeState }}" }}'
+  register: set_docker_swarm_node_status
+  changed_when: false
+  failed_when: false
+
+- name: Join secondary managers to Swarm
+  ansible.builtin.command:
+    cmd: >-
+      docker swarm join
+      --token {{ set_docker_swarm_manager_token }}
+      {{ set_docker_swarm_advertise_addr }}:{{ set_docker_swarm_advertise_port }}
+  when:
+    - inventory_hostname in groups['swarm_managers']
+    - inventory_hostname != groups['swarm_managers'] | first
+    - set_docker_swarm_node_status.stdout | default('') | trim == "inactive"
+  changed_when: true
+  no_log: true
+
+- name: Join workers to Swarm
+  ansible.builtin.command:
+    cmd: >-
+      docker swarm join
+      --token {{ set_docker_swarm_worker_token }}
+      {{ set_docker_swarm_advertise_addr }}:{{ set_docker_swarm_advertise_port }}
+  when:
+    - inventory_hostname in groups['swarm_workers']
+    - set_docker_swarm_node_status.stdout | default('') | trim == "inactive"
+  changed_when: true
+  no_log: true

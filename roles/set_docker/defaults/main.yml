@@ -1,32 +1,37 @@
 ---
 set_docker_sudo: []
 set_docker_deploy: []
-
 set_docker_arch_map:
   x86_64: amd64
   aarch64: arm64
-
 set_docker_packages:
   - docker-ce
   - docker-ce-cli
   - containerd.io
   - docker-buildx-plugin
   - docker-compose-plugin
-
-# Docker registry authentication
-set_docker_registries: []
-set_docker_username: ""
-set_docker_password: ""
+set_docker_prerequisites:
+  - curl
+  - gnupg
+  - python3-docker
+  - python3-debian
+  - ca-certificates
+set_docker_repo_key_url: "https://download.docker.com/linux/ubuntu/gpg"
+set_docker_repo_keyring: "/etc/apt/keyrings/docker.asc"
+set_docker_repo_url: "https://download.docker.com/linux/ubuntu"
 
 # Docker daemon configuration
 set_docker_log_driver: "json-file"
 set_docker_log_max_size: "100m"
 set_docker_log_max_file: "5"
 set_docker_storage_driver: "overlay2"
-
-# Default address pools для Swarm overlay сетей
 set_docker_default_address_pools:
   - base: "172.30.0.0/16"
     size: 24
   - base: "172.31.0.0/16"
     size: 24
+
+# Docker registry authentication
+set_docker_registries: []
+set_docker_username: ""
+set_docker_password: "" # vault_docker_password

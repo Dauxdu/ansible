@@ -1,0 +1,10 @@
+---
+- name: "Generate compose file '{{ stack_name }}'"
+  ansible.builtin.template:
+    src: compose.yml.j2
+    dest: "{{ stack_compose_path }}"
+    owner: root
+    group: root
+    mode: "{{ stack_compose_mode }}"
+  delegate_to: "{{ groups['swarm_managers'] | first }}"
+  run_once: true

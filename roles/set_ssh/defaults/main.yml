@@ -9,3 +9,4 @@ set_ssh_macs: "hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com"
 set_ssh_max_auth_tries: 3
 set_ssh_client_alive_interval: 300
 set_ssh_client_alive_count_max: 2
+set_ssh_x11_forwarding: "no"

@@ -1,0 +1,27 @@
+---
+- name: Configure passwordless sudo for admin users
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ item.name }}"
+    content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL\n"
+    owner: root
+    group: root
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"
+  loop: "{{ set_users_sudo }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Configure restricted sudo for deploy users
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ item.name }}"
+    content: >-
+      {{ item.name }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl,
+      /usr/bin/docker stack *, /usr/bin/docker service *, /usr/bin/docker ps *
+    owner: root
+    group: root
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"
+  loop: "{{ set_users_deploy }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: set_users_deploy | length > 0
