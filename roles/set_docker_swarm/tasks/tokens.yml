@@ -23,7 +23,7 @@
       {{ hostvars[swarm_primary].set_docker_swarm_worker_token_result.stdout | default('') | trim }}
     set_docker_swarm_manager_token: >-
       {{ hostvars[swarm_primary].set_docker_swarm_manager_token_result.stdout | default('') | trim }}
-    set_docker_swarm_advertise_addr: "{{ hostvars[swarm_primary].ip_address }}"
+    set_docker_swarm_advertise_addr: "{{ hostvars[swarm_primary].ansible_host }}"
   no_log: true
   when:
     - hostvars[groups['swarm_managers'] | first].set_docker_swarm_worker_token_result is defined
