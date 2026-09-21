@@ -5,8 +5,8 @@ ignore: |
   .git/
   .github/
   .ansible/
-  .yamllint.yml
-  .ansible-lint.yml
+  .yamllint
+  .ansible-lint
 
 rules:
   document-start: disable

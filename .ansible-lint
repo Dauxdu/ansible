@@ -1,18 +1,11 @@
 ---
 profile: production
 strict: false
+
 exclude_paths:
   - .git/
   - .github/
   - .ansible/
-  - .yamllint.yml
-  - .ansible-lint.yml
+  - .yamllint
+  - .ansible-lint
   - collections/
-warn_list:
-  - command-instead-of-shell
-  - no-handler
-  - risky-file-permissions
-  - no-changed-when
-  - no-jinja-when
-  - yaml[line-length]
-  - name[casing]
