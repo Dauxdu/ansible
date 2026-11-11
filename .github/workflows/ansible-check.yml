@@ -7,6 +7,7 @@ on:
       - "roles/**"
       - ".ansible-lint"
       - ".yamllint"
+      - "collections/requirements.yml"
       - "requirements-lint.txt"
       - ".github/workflows/ansible-check.yml"
   pull_request:
@@ -15,6 +16,7 @@ on:
       - "roles/**"
       - ".ansible-lint"
       - ".yamllint"
+      - "collections/requirements.yml"
       - "requirements-lint.txt"
       - ".github/workflows/ansible-check.yml"
   workflow_dispatch:
@@ -54,10 +56,8 @@ jobs:
 
       - name: Check YAML syntax with yamllint
         id: yamllint
-        continue-on-error: true
         run: yamllint --format parsable .
 
       - name: Run ansible-lint
         id: ansible_lint
-        continue-on-error: true
         run: ansible-lint
