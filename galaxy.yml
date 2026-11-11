@@ -1,6 +1,9 @@
 namespace: dauxdu
 name: roles
 version: 1.0.0
+readme: README.md
 authors:
   - Dauxdu
 description: Коллекция базовых Ansible-ролей для настройки серверов
+license:
+  - MIT
