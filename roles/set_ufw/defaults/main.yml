@@ -1,0 +1,4 @@
+---
+set_ufw_rules_allow:
+  - { port: 22, proto: tcp, comment: "SSH" }
+set_ufw_rules_logging: "off"
