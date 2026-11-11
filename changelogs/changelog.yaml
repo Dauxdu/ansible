@@ -1,0 +1,7 @@
+---
+releases:
+  1.0.0:
+    release_date: "2026-11-11"
+    changes:
+      minor_changes:
+        - Initial release with base roles.

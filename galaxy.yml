@@ -7,3 +7,12 @@ authors:
 description: Коллекция базовых Ansible-ролей для настройки серверов
 license:
   - MIT
+tags:
+  - linux
+  - infrastructure
+  - security
+repository: https://github.com/Dauxdu/ansible
+issues: https://github.com/Dauxdu/ansible/issues
+build_ignore:
+  - .git
+  - .github
