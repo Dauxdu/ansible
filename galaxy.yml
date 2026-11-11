@@ -1,0 +1,6 @@
+namespace: dauxdu
+name: roles
+version: 1.0.0
+authors:
+  - Dauxdu
+description: Коллекция базовых Ansible-ролей для настройки серверов
