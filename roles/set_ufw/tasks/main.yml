@@ -19,9 +19,9 @@
   community.general.ufw:
     rule: allow
     port: "{{ item.port }}"
-    proto: "{{ item.proto }}"
-    comment: "{{ item.comment }}"
-  loop: "{{ set_ufw_rules_allow }}"
+    proto: "{{ item.proto | default('any') }}"
+    comment: "{{ item.comment | default(omit) }}"
+  loop: "{{ set_ufw_rules_allow | default([]) }}"
 
 - name: Enable ufw
   community.general.ufw:
