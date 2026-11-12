@@ -1,5 +1,5 @@
 ---
 - name: Restart SSH
   ansible.builtin.systemd:
-    name: "{{ ssh_hardening_service_name }}"
+    name: "{{ set_ssh_service_name }}"
     state: restarted
