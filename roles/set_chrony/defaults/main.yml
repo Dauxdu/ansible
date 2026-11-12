@@ -1,0 +1,7 @@
+---
+set_chrony_service_name: chrony
+set_chrony_sources_config_path: /etc/chrony/sources.d/ansible.sources
+
+set_chrony_ntp_servers:
+  - ntp.ubuntu.com
+  - pool.ntp.org

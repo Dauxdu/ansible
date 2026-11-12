@@ -1,0 +1,3 @@
+{% for server in set_chrony_ntp_servers %}
+server {{ server }} iburst
+{% endfor %}
