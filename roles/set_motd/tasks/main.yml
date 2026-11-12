@@ -9,4 +9,6 @@
   ansible.builtin.template:
     src: motd.j2
     dest: /etc/update-motd.d/01-custom
+    owner: root
+    group: root
     mode: "0755"

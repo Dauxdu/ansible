@@ -1,49 +1,44 @@
 #!/bin/bash
 # {{ ansible_managed }}
 
-HOSTNAME=$(hostname)
-{% if set_motd_show_os %}
-OS=$(lsb_release -d 2>/dev/null | cut -f2 || cat /etc/os-release | grep PRETTY_NAME | cut -d'"' -f2)
-{% endif %}
-{% if set_motd_show_kernel %}
-KERNEL=$(uname -r)
-{% endif %}
-{% if set_motd_show_uptime %}
-UPTIME=$(uptime -p | sed 's/up //')
-{% endif %}
-{% if set_motd_show_cpu %}
-CPU_CORES=$(nproc)
-{% endif %}
-{% if set_motd_show_memory %}
-MEMORY_TOTAL=$(free -h | grep Mem | awk '{print $2}')
-MEMORY_FREE=$(free -h | grep Mem | awk '{print $4}')
-{% endif %}
-{% if set_motd_show_disk %}
-DISK_TOTAL=$(df -h / | grep / | awk '{print $2}')
-DISK_FREE=$(df -h / | grep / | awk '{print $4}')
-{% endif %}
-
 echo "----------------------------------------------"
-{% if set_motd_show_hostname %}
-echo "  Welcome to $HOSTNAME"
+{% if set_motd_show.hostname %}
+echo "  Hostname: $(hostname)"
 {% endif %}
-echo "----------------------------------------------"
-{% if set_motd_show_os %}
-echo "  OS: $OS"
+{% if set_motd_show.ip %}
+echo "  IP: $(hostname -I | awk '{print $1}')"
 {% endif %}
-{% if set_motd_show_kernel %}
-echo "  Kernel: $KERNEL"
+{% if set_motd_show.os %}
+echo "  OS: $(. /etc/os-release && echo "$PRETTY_NAME")"
 {% endif %}
-{% if set_motd_show_uptime %}
-echo "  Uptime: $UPTIME"
+{% if set_motd_show.kernel %}
+echo "  Kernel: $(uname -r)"
 {% endif %}
-{% if set_motd_show_cpu %}
-echo "  CPU: $CPU_CORES cores"
+{% if set_motd_show.uptime %}
+echo "  Uptime: $(uptime -p | sed 's/up //')"
 {% endif %}
-{% if set_motd_show_memory %}
-echo "  Memory: $MEMORY_TOTAL total, $MEMORY_FREE free"
+{% if set_motd_show.cpu %}
+echo "  CPU: $(nproc) cores"
 {% endif %}
-{% if set_motd_show_disk %}
-echo "  Disk: $DISK_TOTAL total, $DISK_FREE free"
+{% if set_motd_show.memory %}
+echo "  Memory: $(LC_ALL=C free -h | awk '/^Mem:/ {print $2}') total, $(LC_ALL=C free -h | awk '/^Mem:/ {print $7}') available"
+{% endif %}
+{% if set_motd_show.disk %}
+echo "  Disk: $(LC_ALL=C df -h / | awk 'NR==2 {print $2}') total, $(LC_ALL=C df -h / | awk 'NR==2 {print $4}') free"
+{% endif %}
+{% if set_motd_show.load %}
+echo "  Load: $(cat /proc/loadavg | awk '{print $1, $2, $3}')"
 {% endif %}
 echo "----------------------------------------------"
+{% if set_motd_show.failed_units %}
+FAILED=$(systemctl list-units --state=failed --no-legend | wc -l)
+if [ "$FAILED" -gt 0 ]; then
+  echo "  WARNING: $FAILED failed systemd units (systemctl --failed)"
+fi
+{% endif %}
+{% if set_motd_show.disk_warning %}
+USE=$(LC_ALL=C df / | awk 'NR==2 {gsub("%",""); print $5}')
+if [ "$USE" -ge {{ set_motd_disk_warning_threshold }} ]; then
+  echo "  WARNING: root filesystem ${USE}% full"
+fi
+{% endif %}
