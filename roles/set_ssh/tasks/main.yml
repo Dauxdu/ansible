@@ -1,45 +1,16 @@
 ---
-- name: Remove cloud-init SSH drop-in if present
-  ansible.builtin.file:
-    path: /etc/ssh/sshd_config.d/50-cloud-init.conf
-    state: absent
-  notify: Restart SSH
-
-- name: Harden SSH configuration
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-    state: present
-    backup: true
-    validate: /usr/sbin/sshd -t -f %s
-  loop:
-    - regexp: "^#?Port"
-      line: "Port {{ set_ssh_port }}"
-    - regexp: "^#?PermitRootLogin"
-      line: "PermitRootLogin {{ set_ssh_permit_root_login }}"
-    - regexp: "^#?PasswordAuthentication"
-      line: "PasswordAuthentication {{ set_ssh_password_authentication }}"
-    - regexp: "^#?PubkeyAuthentication"
-      line: "PubkeyAuthentication {{ set_ssh_pubkey_authentication }}"
-    - regexp: "^#?PermitEmptyPasswords"
-      line: "PermitEmptyPasswords {{ set_ssh_permit_empty_passwords }}"
-    - regexp: "^#?Ciphers"
-      line: "Ciphers {{ set_ssh_ciphers }}"
-    - regexp: "^#?MACs"
-      line: "MACs {{ set_ssh_macs }}"
-    - regexp: "^#?X11Forwarding"
-      line: "X11Forwarding {{ set_ssh_x11_forwarding }}"
-    - regexp: "^#?MaxAuthTries"
-      line: "MaxAuthTries {{ set_ssh_max_auth_tries }}"
-    - regexp: "^#?ClientAliveInterval"
-      line: "ClientAliveInterval {{ set_ssh_client_alive_interval }}"
-    - regexp: "^#?ClientAliveCountMax"
-      line: "ClientAliveCountMax {{ set_ssh_client_alive_count_max }}"
-  notify: Restart SSH
-
 - name: Ensure SSH service is enabled and running
-  ansible.builtin.systemd:
-    name: ssh
+  ansible.builtin.systemd_service:
+    name: "{{ set_ssh_service_name }}"
     enabled: true
     state: started
+
+- name: Apply hardening drop-in
+  ansible.builtin.template:
+    src: 01-hardening.conf.j2
+    dest: "{{ set_ssh_config_path }}"
+    mode: "0600"
+    owner: root
+    group: root
+    validate: "/usr/sbin/sshd -t -f %s"
+  notify: Restart SSH
