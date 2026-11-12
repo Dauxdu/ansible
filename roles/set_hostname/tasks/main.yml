@@ -2,8 +2,6 @@
 - name: Set system hostname
   ansible.builtin.hostname:
     name: "{{ set_hostname_name }}"
-    use: systemd
-  when: ansible_facts.hostname != set_hostname_name
 
 - name: Ensure localhost hostname mapping in /etc/hosts
   ansible.builtin.lineinfile:
@@ -11,3 +9,6 @@
     regexp: '^127\.0\.1\.1'
     line: "127.0.1.1 {{ set_hostname_name }}"
     state: present
+    owner: root
+    group: root
+    mode: "0644"
