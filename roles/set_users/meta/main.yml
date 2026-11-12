@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Dauxdu
+  description: Управление пользователями, sudo-правами и SSH-ключами
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []

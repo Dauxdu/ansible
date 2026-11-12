@@ -1,8 +1,5 @@
 ---
-- name: Create user groups
-  ansible.builtin.import_tasks: groups.yml
-
-- name: Create user accounts
+- name: Create user accounts and groups
   ansible.builtin.import_tasks: users.yml
 
 - name: Configure sudo access

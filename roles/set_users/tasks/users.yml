@@ -1,27 +1,29 @@
 ---
-- name: Create sudo users
-  ansible.builtin.user:
-    name: "{{ item.name }}"
+- name: Ensure sudo package is installed
+  ansible.builtin.apt:
+    name: sudo
     state: present
-    groups: "{{ set_users_sudo_groups | join(',') }}"
-    append: true
-    shell: /bin/bash
-    create_home: true
-    password_lock: false
-  loop: "{{ set_users_sudo }}"
-  loop_control:
-    label: "{{ item.name }}"
+    cache_valid_time: 3600
 
-- name: Create deploy users
+- name: Create user groups
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ set_users_accounts | selectattr('groups', 'defined') | map(attribute='groups') | flatten | unique }}"
+
+- name: Create users
   ansible.builtin.user:
     name: "{{ item.name }}"
     state: present
-    groups: "{{ set_users_deploy_groups | join(',') }}"
+    groups: "{{ user.groups | join(',') if user.groups else omit }}"
     append: true
-    shell: /bin/bash
-    create_home: true
-    password_lock: true
-  loop: "{{ set_users_deploy }}"
+    shell: "{{ user.shell }}"
+    create_home: "{{ user.create_home }}"
+    password_lock: "{{ user.password_lock }}"
+    comment: "{{ user.comment | default(omit) }}"
+    uid: "{{ user.uid | default(omit) }}"
+  vars:
+    user: "{{ set_users_account_defaults | combine(item) }}"
+  loop: "{{ set_users_accounts }}"
   loop_control:
     label: "{{ item.name }}"
-  when: set_users_deploy | length > 0

@@ -1,27 +1,26 @@
----
-- name: Configure passwordless sudo for admin users
+# sudo игнорирует файлы в /etc/sudoers.d/, в имени которых есть точка
+- name: Configure passwordless sudo for users
   ansible.builtin.copy:
-    dest: "/etc/sudoers.d/{{ item.name }}"
-    content: "{{ item.name }} ALL=(ALL) NOPASSWD:ALL\n"
+    dest: "/etc/sudoers.d/{{ item.name | replace('.', '_') }}"
+    content: "{{ item.name }} ALL=(root) NOPASSWD: ALL\n"
     owner: root
     group: root
     mode: "0440"
     validate: "/usr/sbin/visudo -cf %s"
-  loop: "{{ set_users_sudo }}"
+  loop: "{{ set_users_accounts | rejectattr('allow_commands', 'defined') | list }}"
   loop_control:
     label: "{{ item.name }}"
 
-- name: Configure restricted sudo for deploy users
+- name: Configure restricted sudo for users
   ansible.builtin.copy:
-    dest: "/etc/sudoers.d/{{ item.name }}"
-    content: >-
-      {{ item.name }} ALL=(ALL) NOPASSWD: /usr/bin/systemctl,
-      /usr/bin/docker stack *, /usr/bin/docker service *, /usr/bin/docker ps *
+    dest: "/etc/sudoers.d/{{ item.name | replace('.', '_') }}"
+    content: "{{ item.name }} ALL=(root) NOPASSWD: {{ item.allow_commands | join(', ') }}\n"
     owner: root
     group: root
     mode: "0440"
     validate: "/usr/sbin/visudo -cf %s"
-  loop: "{{ set_users_deploy }}"
+  loop: >-
+    {{ set_users_accounts | selectattr('allow_commands', 'defined')
+       | rejectattr('allow_commands', 'eq', []) | list }}
   loop_control:
     label: "{{ item.name }}"
-  when: set_users_deploy | length > 0

@@ -1,6 +1,45 @@
 ---
-set_users_sudo_groups:
-  - sudo
-set_users_deploy_groups: []
-set_users_sudo: []
-set_users_deploy: []
+# Все пользователи в одном списке; sudo-права определяются данными:
+#   allow_commands не задан  -> полный NOPASSWD:ALL (админ)
+#   allow_commands: [...]    -> sudo только на перечисленные команды
+#   allow_commands: []       -> без sudo вовсе (sudoers-файл не создаётся)
+#
+# Поддерживаемые поля пользователя:
+#   name            (обязательно) имя учётной записи
+#   groups          список дополнительных групп
+#   ssh_public_key  публичный SSH-ключ (несколько — одной многострочной строкой)
+#   allow_commands  список команд для restricted sudo (см. выше)
+#   shell           оболочка, default /bin/bash
+#   comment         GECOS-описание пользователя
+#   uid             фиксированный UID
+#   create_home     создавать ли домашний каталог, default true
+#   password_lock   блокировать ли пароль, default true
+set_users_accounts: []
+# --- Примеры конфигурации -----------------------------------------------------
+#  # 1. Администратор с полным sudo
+#  - name: admin
+#    comment: "admin"
+#    uid: 1001
+#    groups: [sudo, docker]
+#    shell: /usr/bin/fish
+#    ssh_public_key: "ssh-ed25519 AAAA... admin"
+#
+#  # 2. Сервисный пользователь с ограниченным sudo
+#  - name: deploy
+#    groups: [docker]
+#    ssh_public_key: |
+#      "ssh-ed25519 AAAA... deploy-1"
+#      "ssh-ed25519 AAAA... deploy-2"
+#    allow_commands:
+#      - /usr/bin/docker stack *
+#      - /usr/bin/docker ps
+#
+#  # 3. Обычный пользователь без прав sudo
+#  - name: viewer
+#    allow_commands: []
+#    ssh_public_key: "ssh-ed25519 AAAA... viewer"
+
+set_users_account_defaults:
+  shell: /bin/bash
+  password_lock: true
+  create_home: true
