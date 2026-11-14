@@ -20,6 +20,7 @@
     rule: allow
     port: "{{ item.port }}"
     proto: "{{ item.proto | default('any') }}"
+    from_ip: "{{ item.from | default(omit) }}"
     comment: "{{ item.comment | default(omit) }}"
   loop: "{{ set_ufw_rules_allow | default([]) }}"
 

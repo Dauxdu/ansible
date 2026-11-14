@@ -1,4 +1,5 @@
 ---
 set_ufw_rules_allow:
   - { port: 22, proto: tcp, comment: "SSH" }
+#  - { port: 2377, proto: tcp, from: 10.0.0.5, comment: "swarm API от менеджера" }
 set_ufw_rules_logging: "off"
