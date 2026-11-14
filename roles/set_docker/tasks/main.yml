@@ -14,7 +14,6 @@
 - name: Configure Docker registry authentication
   ansible.builtin.import_tasks: registry_auth.yml
   when:
-    - set_docker_deploy | length > 0
     - set_docker_registries | length > 0
     - set_docker_username | length > 0
     - set_docker_password | length > 0

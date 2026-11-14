@@ -1,6 +1,4 @@
 ---
-set_docker_sudo: []
-set_docker_deploy: []
 set_docker_arch_map:
   x86_64: amd64
   aarch64: arm64
@@ -16,9 +14,10 @@ set_docker_prerequisites:
   - python3-docker
   - python3-debian
   - ca-certificates
-set_docker_repo_key_url: "https://download.docker.com/linux/ubuntu/gpg"
+# Debian → linux/debian, Ubuntu → linux/ubuntu
+set_docker_repo_url: "https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}"
+set_docker_repo_key_url: "{{ set_docker_repo_url }}/gpg"
 set_docker_repo_keyring: "/etc/apt/keyrings/docker.asc"
-set_docker_repo_url: "https://download.docker.com/linux/ubuntu"
 
 # Docker daemon configuration
 set_docker_log_driver: "json-file"

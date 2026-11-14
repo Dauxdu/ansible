@@ -1,25 +1,27 @@
 ---
-- name: Create Docker config directory for deploy users
+- name: Create Docker config directory for users
   ansible.builtin.file:
     path: "/home/{{ item.name }}/.docker"
     state: directory
     owner: "{{ item.name }}"
     group: "{{ item.name }}"
     mode: "0700"
-  loop: "{{ set_docker_deploy }}"
+  loop: "{{ set_users_accounts | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
+  when: "'docker' in item.groups | default([])"
 
-- name: Deploy Docker registry auth for deploy users
+- name: Deploy Docker registry auth for users
   ansible.builtin.template:
     src: config.json.j2
     dest: "/home/{{ item.name }}/.docker/config.json"
     owner: "{{ item.name }}"
     group: "{{ item.name }}"
     mode: "0600"
-  loop: "{{ set_docker_deploy }}"
+  loop: "{{ set_users_accounts | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
+  when: "'docker' in item.groups | default([])"
   no_log: true
 
 - name: Create Docker config directory for root
