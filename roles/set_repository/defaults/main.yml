@@ -1,3 +1,23 @@
 ---
-set_repository_apt_urls: []
-set_repository_repositories: []
+# Список репозиториев; поля со значениями по умолчанию можно опускать.
+#
+#   name        (обязательно) имя = файл /etc/apt/sources.list.d/<name>.sources
+#   uris        (обязательно) URI репозитория
+#   suites      (обязательно) suites (дистрибутивы); для flat-репозитория — [/]
+#   types         default deb (deb, deb-src)
+#   components    default не задаётся (для flat-репозиториев)
+#   signed_by     GPG-ключ: URL, путь к keyring-файлу или ключ текстом
+#   enabled       default true
+#   state         default present (absent — удалить репозиторий)
+set_repository_repos: []
+#  - name: nexus-main
+#    uris:
+#      - https://nexus.example.com/repository/apt-ubuntu-proxy
+#    suites:
+#      - noble
+#    components: [main, universe]
+#    signed_by: https://nexus.example.com/repository/keys/apt-proxy.gpg
+#  - name: nexus-docker
+#    uris: [https://nexus.example.com/repository/apt-docker]
+#    suites: [stable]
+#    signed_by: "{{ lookup('ansible.builtin.file', 'files/docker.asc') }}"
