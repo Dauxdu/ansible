@@ -1,3 +1,3 @@
 ---
+set_docker_swarm_primary: "{{ groups['swarm_managers'] | first }}"
 set_docker_swarm_advertise_port: 2377
-set_docker_swarm_token_expiry: "0s"

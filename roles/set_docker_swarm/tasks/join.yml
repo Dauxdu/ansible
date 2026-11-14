@@ -14,7 +14,7 @@
       {{ set_docker_swarm_advertise_addr }}:{{ set_docker_swarm_advertise_port }}
   when:
     - inventory_hostname in groups['swarm_managers']
-    - inventory_hostname != groups['swarm_managers'] | first
+    - inventory_hostname != set_docker_swarm_primary
     - set_docker_swarm_node_status.stdout | default('') | trim == "inactive"
   changed_when: true
   no_log: true

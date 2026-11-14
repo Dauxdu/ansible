@@ -5,13 +5,13 @@
   register: set_docker_swarm_status_primary
   changed_when: false
   failed_when: false
-  when: inventory_hostname == groups['swarm_managers'] | first
+  when: inventory_hostname == set_docker_swarm_primary
 
 - name: Initialize Docker Swarm on primary manager
   ansible.builtin.command:
-    cmd: docker swarm init --advertise-addr {{ ip_address }}
+    cmd: docker swarm init --advertise-addr {{ ansible_host }}
   when:
-    - inventory_hostname == groups['swarm_managers'] | first
+    - inventory_hostname == set_docker_swarm_primary
     - set_docker_swarm_status_primary.stdout | default('') | trim == "inactive"
   changed_when: true
 
@@ -24,4 +24,4 @@
   delay: 3
   changed_when: false
   when:
-    - inventory_hostname == groups['swarm_managers'] | first
+    - inventory_hostname == set_docker_swarm_primary

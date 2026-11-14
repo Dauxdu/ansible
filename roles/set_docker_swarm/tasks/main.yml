@@ -1,7 +1,4 @@
 ---
-- name: Deploy Swarm firewall rules
-  ansible.builtin.import_tasks: firewall.yml
-
 - name: Initialize Docker Swarm
   ansible.builtin.import_tasks: init.yml
 

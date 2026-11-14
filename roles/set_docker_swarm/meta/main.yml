@@ -1,3 +1,16 @@
 ---
+galaxy_info:
+  author: Dauxdu
+  description: Инициализация Docker Swarm и присоединение узлов (группы swarm_managers/swarm_workers)
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
 dependencies:
-  - role: set_firewall
+  - role: set_docker

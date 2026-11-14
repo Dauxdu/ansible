@@ -5,7 +5,7 @@
   register: set_docker_swarm_worker_token_result
   changed_when: false
   no_log: true
-  when: inventory_hostname == groups['swarm_managers'] | first
+  when: inventory_hostname == set_docker_swarm_primary
 
 - name: Get Swarm manager token
   ansible.builtin.command:
@@ -13,17 +13,15 @@
   register: set_docker_swarm_manager_token_result
   changed_when: false
   no_log: true
-  when: inventory_hostname == groups['swarm_managers'] | first
+  when: inventory_hostname == set_docker_swarm_primary
 
 - name: Set Swarm tokens as facts for all hosts
-  vars:
-    swarm_primary: "{{ groups['swarm_managers'] | first }}"
   ansible.builtin.set_fact:
     set_docker_swarm_worker_token: >-
-      {{ hostvars[swarm_primary].set_docker_swarm_worker_token_result.stdout | default('') | trim }}
+      {{ hostvars[set_docker_swarm_primary].set_docker_swarm_worker_token_result.stdout | default('') | trim }}
     set_docker_swarm_manager_token: >-
-      {{ hostvars[swarm_primary].set_docker_swarm_manager_token_result.stdout | default('') | trim }}
-    set_docker_swarm_advertise_addr: "{{ hostvars[swarm_primary].ansible_host }}"
+      {{ hostvars[set_docker_swarm_primary].set_docker_swarm_manager_token_result.stdout | default('') | trim }}
+    set_docker_swarm_advertise_addr: "{{ hostvars[set_docker_swarm_primary].ansible_host }}"
   no_log: true
   when:
-    - hostvars[groups['swarm_managers'] | first].set_docker_swarm_worker_token_result is defined
+    - hostvars[set_docker_swarm_primary].set_docker_swarm_worker_token_result is defined
