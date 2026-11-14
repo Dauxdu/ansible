@@ -1,11 +1,50 @@
 ---
-- name: Deploy netplan configuration
-  ansible.builtin.template:
-    src: 01-netcfg.yaml.j2
-    dest: "/etc/netplan/{{ set_netplan_config_file }}"
-    owner: root
-    group: root
-    mode: "0600"
-  notify:
-    - Validate netplan configuration
-    - Apply netplan configuration
+- name: Validate netplan input
+  ansible.builtin.assert:
+    that:
+      - set_netplan_config.dhcp | bool or set_netplan_config.address | length > 0
+      - set_netplan_config.dhcp | bool or set_netplan_config.gateway | length > 0
+    fail_msg: "set_netplan_config: при dhcp: false обязательны address и gateway"
+
+- name: Deploy and validate netplan configuration
+  block:
+    - name: Deploy netplan configuration
+      ansible.builtin.template:
+        src: 01-netcfg.yaml.j2
+        dest: "/etc/netplan/{{ set_netplan_config_file }}"
+        owner: root
+        group: root
+        mode: "0600"
+        backup: true
+      register: set_netplan_template
+      notify: Apply netplan configuration
+
+    - name: Validate netplan configuration
+      ansible.builtin.command:
+        cmd: netplan generate
+      changed_when: false
+      when: set_netplan_template is changed
+      # noqa: no-handler
+
+  rescue:
+    - name: Restore previous netplan configuration
+      ansible.builtin.copy:
+        src: "{{ set_netplan_template.backup_file }}"
+        dest: "/etc/netplan/{{ set_netplan_config_file }}"
+        remote_src: true
+        owner: root
+        group: root
+        mode: "0600"
+      when: set_netplan_template.backup_file is defined
+
+    - name: Remove invalid netplan configuration
+      ansible.builtin.file:
+        path: "/etc/netplan/{{ set_netplan_config_file }}"
+        state: absent
+      when:
+        - set_netplan_template is changed
+        - set_netplan_template.backup_file is not defined
+
+    - name: Report invalid netplan configuration
+      ansible.builtin.fail:
+        msg: "netplan generate отклонил конфигурацию; конфигурация возвращена к предыдущему состоянию."

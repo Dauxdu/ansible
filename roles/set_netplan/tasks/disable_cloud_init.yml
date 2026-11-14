@@ -1,4 +1,9 @@
 ---
+- name: Check for cloud-init configuration directory
+  ansible.builtin.stat:
+    path: /etc/cloud/cloud.cfg.d
+  register: set_netplan_cloud_cfg_dir
+
 - name: Disable cloud-init network management
   ansible.builtin.copy:
     dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
@@ -8,6 +13,7 @@
     owner: root
     group: root
     mode: "0644"
+  when: set_netplan_cloud_cfg_dir.stat.exists
 
 - name: Remove cloud-init generated netplan configs
   ansible.builtin.file:
@@ -18,3 +24,4 @@
     - /etc/netplan/00-installer-config.yml
     - /etc/netplan/50-cloud-init.yaml
     - /etc/netplan/50-cloud-init.yml
+  notify: Apply netplan configuration

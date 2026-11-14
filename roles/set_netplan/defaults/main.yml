@@ -1,8 +1,17 @@
 ---
+# Конфигурация сети одним словарём:
+#   interface    имя интерфейса
+#   dhcp         DHCP-клиент (true) или статика (false)
+#   address      IP-адрес (обязателен при dhcp: false)
+#   prefix       CIDR-префикс подсети (24 = /24)
+#   gateway      шлюз (обязателен при dhcp: false)
+#   dns_servers  список DNS-серверов
+set_netplan_config:
+  interface: eth0
+  dhcp: true
+  address: ""
+  prefix: 24
+  gateway: ""
+  dns_servers: []
+
 set_netplan_config_file: "01-netcfg.yaml"
-set_netplan_interface: "{{ network_interface }}"
-set_netplan_dhcp: "{{ dhcp | default(false) }}"
-set_netplan_ip_address: "{{ ip_address }}"
-set_netplan_subnet_mask: "{{ subnet_mask | default(24) }}"
-set_netplan_gateway: "{{ gateway }}"
-set_netplan_dns_servers: "{{ dns_servers | default([gateway]) }}"

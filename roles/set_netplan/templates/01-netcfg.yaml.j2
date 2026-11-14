@@ -3,12 +3,16 @@ network:
   version: 2
   renderer: networkd
   ethernets:
-    {{ set_netplan_interface }}:
-      dhcp4: {{ set_netplan_dhcp | bool | to_json }}
+    {{ set_netplan_config.interface }}:
+      dhcp4: {{ set_netplan_config.dhcp | bool | to_json }}
+{% if not set_netplan_config.dhcp | bool %}
       addresses:
-        - {{ set_netplan_ip_address }}/{{ set_netplan_subnet_mask }}
+        - {{ set_netplan_config.address }}/{{ set_netplan_config.prefix }}
       routes:
         - to: default
-          via: {{ set_netplan_gateway }}
+          via: {{ set_netplan_config.gateway }}
+{% endif %}
+{% if set_netplan_config.dns_servers | length > 0 %}
       nameservers:
-        addresses: {{ set_netplan_dns_servers | to_json }}
+        addresses: {{ set_netplan_config.dns_servers | to_json }}
+{% endif %}
