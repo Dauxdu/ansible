@@ -1,0 +1,17 @@
+// {{ ansible_managed }}
+
+Unattended-Upgrade::Origins-Pattern {
+{% for origin in set_unattended_upgrades_origins %}
+    "${distro_id}:${distro_codename}-{{ origin }}";
+{% endfor %}
+};
+
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot "{{ set_unattended_upgrades_reboot | lower }}";
+{% if set_unattended_upgrades_reboot %}
+Unattended-Upgrade::Automatic-Reboot-Time "{{ set_unattended_upgrades_reboot_time }}";
+{% endif %}
+{% if set_unattended_upgrades_email | length > 0 %}
+Unattended-Upgrade::Mail "{{ set_unattended_upgrades_email }}";
+Unattended-Upgrade::MailReport "on-change";
+{% endif %}
