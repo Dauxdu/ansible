@@ -16,3 +16,10 @@ issues: https://github.com/Dauxdu/ansible/issues
 build_ignore:
   - .git
   - .github
+  - .ansible
+  - .gitignore
+  - .ansible-lint
+  - .yamllint
+  - ansible.cfg
+  - collections
+  - requirements-lint.txt
