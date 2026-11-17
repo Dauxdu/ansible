@@ -3,4 +3,4 @@
   ansible.builtin.apt:
     name: "{{ set_packages_apt }}"
     state: present
-    update_cache: true
+    cache_valid_time: 3600
