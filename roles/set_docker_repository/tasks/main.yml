@@ -1,0 +1,42 @@
+---
+- name: Install repository prerequisite packages
+  ansible.builtin.apt:
+    name: "{{ set_docker_repository_prerequisites }}"
+    state: present
+    cache_valid_time: 3600
+
+- name: Create apt keyrings directory
+  ansible.builtin.file:
+    path: "{{ set_docker_repository_keyring | dirname }}"
+    state: directory
+    mode: "0755"
+
+- name: Download Docker GPG key
+  ansible.builtin.get_url:
+    url: "{{ set_docker_repository_key_url }}"
+    dest: "{{ set_docker_repository_keyring }}"
+    mode: "0644"
+    force: false
+
+- name: Add Docker APT repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types:
+      - deb
+    uris:
+      - "{{ set_docker_repository_url }}"
+    suites:
+      - "{{ ansible_facts.distribution_release }}"
+    components:
+      - stable
+    architectures:
+      - "{{ set_docker_repository_arch_map[ansible_facts.architecture] | default(ansible_facts.architecture) }}"
+    signed_by: "{{ set_docker_repository_keyring }}"
+    state: present
+  register: set_docker_repository_added
+
+- name: Update APT cache after repository changes
+  ansible.builtin.apt:
+    update_cache: true
+  when: set_docker_repository_added is changed
+  # noqa: no-handler

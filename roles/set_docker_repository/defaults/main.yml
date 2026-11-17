@@ -1,0 +1,12 @@
+---
+set_docker_repository_url: "https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}"
+set_docker_repository_key_url: "{{ set_docker_repository_url }}/gpg"
+set_docker_repository_keyring: "/etc/apt/keyrings/docker.asc"
+
+set_docker_repository_prerequisites:
+  - ca-certificates
+  - python3-debian
+
+set_docker_repository_arch_map:
+  x86_64: amd64
+  aarch64: arm64
