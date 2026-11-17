@@ -1,3 +1,6 @@
 ---
 set_docker_swarm_primary: "{{ groups['swarm_managers'] | first }}"
 set_docker_swarm_advertise_port: 2377
+set_docker_swarm_advertise_addr: >-
+  {{ hostvars[set_docker_swarm_primary].ansible_host
+     | default(hostvars[set_docker_swarm_primary].ansible_facts.default_ipv4.address, true) }}

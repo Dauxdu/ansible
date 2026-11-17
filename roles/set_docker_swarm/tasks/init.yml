@@ -9,7 +9,7 @@
 
 - name: Initialize Docker Swarm on primary manager
   ansible.builtin.command:
-    cmd: docker swarm init --advertise-addr {{ ansible_host }}
+    cmd: docker swarm init --advertise-addr {{ set_docker_swarm_advertise_addr }}
   when:
     - inventory_hostname == set_docker_swarm_primary
     - set_docker_swarm_status_primary.stdout | default('') | trim == "inactive"

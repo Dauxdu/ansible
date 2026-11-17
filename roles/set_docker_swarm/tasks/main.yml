@@ -1,4 +1,14 @@
 ---
+- name: Verify inventory groups for Swarm
+  ansible.builtin.assert:
+    that:
+      - groups['swarm_managers'] is defined
+      - groups['swarm_managers'] | length > 0
+      - groups['swarm_workers'] is defined
+    fail_msg: >-
+      set_docker_swarm: инвентарь должен содержать непустую группу swarm_managers
+      и группу swarm_workers (может быть пустой)
+
 - name: Initialize Docker Swarm
   ansible.builtin.import_tasks: init.yml
 
