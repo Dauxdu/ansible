@@ -15,7 +15,7 @@
   ansible.builtin.user:
     name: "{{ item.name }}"
     state: present
-    groups: "{{ user.groups | join(',') if user.groups else omit }}"
+    groups: "{{ user.groups | default([]) | join(',') if user.groups | default([]) else omit }}"
     append: true
     shell: "{{ user.shell }}"
     create_home: "{{ user.create_home }}"

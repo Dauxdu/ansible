@@ -28,8 +28,8 @@ set_users_accounts: []
 #  - name: deploy
 #    groups: [docker]
 #    ssh_public_key: |
-#      "ssh-ed25519 AAAA... deploy-1"
-#      "ssh-ed25519 AAAA... deploy-2"
+#      ssh-ed25519 AAAA... deploy-1
+#      ssh-ed25519 AAAA... deploy-2
 #    allow_commands:
 #      - /usr/bin/docker stack *
 #      - /usr/bin/docker ps
@@ -43,3 +43,4 @@ set_users_account_defaults:
   shell: /bin/bash
   password_lock: true
   create_home: true
+  groups: []
