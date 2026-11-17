@@ -3,13 +3,16 @@ galaxy_info:
   author: Dauxdu
   description: Установка и настройка сервиса синхронизации времени chrony
   license: MIT
-  min_ansible_version: "2.10"
+  min_ansible_version: "2.15"
   platforms:
     - name: Debian
       versions:
-        - all
+        - bullseye
+        - bookworm
+        - trixie
     - name: Ubuntu
       versions:
-        - all
+        - jammy
+        - noble
 
 dependencies: []

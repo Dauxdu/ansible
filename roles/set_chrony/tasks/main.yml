@@ -9,7 +9,16 @@
   ansible.builtin.apt:
     name: chrony
     state: present
-    update_cache: true
+    cache_valid_time: 3600
+  notify: Restart chrony
+
+- name: Ensure chrony loads sources.d directory
+  ansible.builtin.lineinfile:
+    path: "{{ set_chrony_main_config_path }}"
+    regexp: '^#?\s*sourcedir\s+/etc/chrony/sources\.d'
+    line: sourcedir /etc/chrony/sources.d
+    state: present
+    backup: true
   notify: Restart chrony
 
 - name: Configure chrony NTP sources
