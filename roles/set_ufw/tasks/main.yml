@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     name: ufw
     state: present
-    update_cache: true
+    cache_valid_time: 3600
 
 - name: "Default policy: deny incoming"
   community.general.ufw:
