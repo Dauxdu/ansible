@@ -1,6 +1,16 @@
 ---
+- name: Verify stack parameters
+  ansible.builtin.assert:
+    that:
+      - deploy_docker_stack_name is defined
+      - deploy_docker_stack_name | length > 0
+      - deploy_docker_stack_compose_path is defined
+    fail_msg: >-
+      deploy_docker_stack: обязательны deploy_docker_stack_name и deploy_docker_stack_compose_path
+  run_once: true
+
 - name: Generate compose file for stack
   ansible.builtin.import_tasks: generate.yml
 
-- name: Deploy and verify Docker stack
+- name: Deploy Docker stack
   ansible.builtin.import_tasks: deploy.yml

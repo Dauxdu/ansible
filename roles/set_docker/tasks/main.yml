@@ -2,9 +2,6 @@
 - name: Install prerequisites
   ansible.builtin.import_tasks: prerequisites.yml
 
-- name: Configure Docker APT repository
-  ansible.builtin.import_tasks: repository.yml
-
 - name: Install Docker Engine
   ansible.builtin.import_tasks: install.yml
 
@@ -13,7 +10,4 @@
 
 - name: Configure Docker registry authentication
   ansible.builtin.import_tasks: registry_auth.yml
-  when:
-    - set_docker_registries | length > 0
-    - set_docker_username | length > 0
-    - set_docker_password | length > 0
+  when: set_docker_registries | length > 0

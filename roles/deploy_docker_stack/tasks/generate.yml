@@ -1,10 +1,11 @@
 ---
-- name: "Generate compose file '{{ stack_name }}'"
+- name: "Generate compose file '{{ deploy_docker_stack_name }}'"
   ansible.builtin.template:
     src: compose.yml.j2
-    dest: "{{ stack_compose_path }}"
+    dest: "{{ deploy_docker_stack_compose_path }}"
     owner: root
     group: root
-    mode: "{{ stack_compose_mode }}"
+    mode: "{{ deploy_docker_stack_compose_mode }}"
+    validate: docker stack config --compose-file %s
   delegate_to: "{{ groups['swarm_managers'] | first }}"
   run_once: true
