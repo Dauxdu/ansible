@@ -1,18 +1,12 @@
 ---
-# apt-get update / unattended-upgrade запускаются systemd-таймерами apt-daily*.timer.
-# 1 — включено, 0 — выключено.
 set_unattended_upgrades_update_package_lists: 1
 set_unattended_upgrades_unattended_upgrade: 1
 
-# Автоперезагрузка, если обновление того требует (например, новое ядро)
 set_unattended_upgrades_reboot: false
 set_unattended_upgrades_reboot_time: "03:00"
 
-# Почта для отчётов unattended-upgrades; пустая строка — отчёты не настраиваются
 set_unattended_upgrades_email: ""
 
-# Origins, из которых ставятся обновления:
-# suite-суффиксы относительно "${distro_id}:${distro_codename}-"
 set_unattended_upgrades_origins:
   - security
   - updates
