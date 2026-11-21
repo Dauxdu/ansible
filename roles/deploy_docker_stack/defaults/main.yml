@@ -1,6 +1,7 @@
 ---
-# Обязательные переменные (передаются через vars при include_role):
-# deploy_docker_stack_name: "" путь к compose-файлу на manager-ноде
-# deploy_docker_stack_compose_path: "" имя stack (docker stack deploy <name>)
+# Обязательные переменные (передаются через vars):
+#   deploy_docker_stack_name          имя stack
+#   deploy_docker_stack_compose_src   путь к compose-файлу
+#   deploy_docker_stack_compose_dst  путь, куда файл будет загружен
 deploy_docker_stack_compose_mode: "0640"
 deploy_docker_stack_prune: true

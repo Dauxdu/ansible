@@ -4,13 +4,17 @@
     that:
       - deploy_docker_stack_name is defined
       - deploy_docker_stack_name | length > 0
-      - deploy_docker_stack_compose_path is defined
+      - deploy_docker_stack_compose_src is defined
+      - deploy_docker_stack_compose_src | length > 0
+      - deploy_docker_stack_compose_dst is defined
+      - deploy_docker_stack_compose_dst | length > 0
     fail_msg: >-
-      deploy_docker_stack: обязательны deploy_docker_stack_name и deploy_docker_stack_compose_path
+      deploy_docker_stack: обязательны deploy_docker_stack_name,
+      deploy_docker_stack_compose_src и deploy_docker_stack_compose_dst
   run_once: true
 
-- name: Generate compose file for stack
-  ansible.builtin.import_tasks: generate.yml
+- name: Upload compose file to manager
+  ansible.builtin.import_tasks: upload.yml
 
 - name: Deploy Docker stack
   ansible.builtin.import_tasks: deploy.yml

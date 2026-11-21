@@ -1,8 +1,8 @@
 ---
-- name: "Generate compose file '{{ deploy_docker_stack_name }}'"
-  ansible.builtin.template:
-    src: compose.yml.j2
-    dest: "{{ deploy_docker_stack_compose_path }}"
+- name: "Upload compose file for '{{ deploy_docker_stack_name }}'"
+  ansible.builtin.copy:
+    src: "{{ deploy_docker_stack_compose_src }}"
+    dest: "{{ deploy_docker_stack_compose_dst }}"
     owner: root
     group: root
     mode: "{{ deploy_docker_stack_compose_mode }}"

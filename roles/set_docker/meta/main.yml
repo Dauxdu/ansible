@@ -12,4 +12,5 @@ galaxy_info:
       versions:
         - all
 
-dependencies: []
+dependencies:
+  - role: set_docker_repository
