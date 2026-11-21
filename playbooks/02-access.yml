@@ -1,0 +1,8 @@
+---
+- name: Access
+  hosts: all
+  become: true
+  roles:
+    - role: set_users
+    - role: set_ssh
+    - role: set_ufw

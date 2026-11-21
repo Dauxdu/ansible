@@ -1,0 +1,11 @@
+---
+- name: Bootstrap
+  hosts: all
+  become: true
+  roles:
+    - role: set_unattended_upgrades
+    - role: set_packages
+    - role: set_timezone
+    - role: set_chrony
+    - role: set_hostname
+    - role: set_motd
