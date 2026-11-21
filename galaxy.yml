@@ -21,5 +21,8 @@ build_ignore:
   - .ansible-lint
   - .yamllint
   - ansible.cfg
+  - playbooks
+  - requirements-lint.txt
+  - ansible.cfg
   - collections
   - requirements-lint.txt
