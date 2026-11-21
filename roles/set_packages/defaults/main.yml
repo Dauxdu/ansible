@@ -2,7 +2,6 @@
 set_packages_apt:
   - ca-certificates
   - gnupg
-  - unattended-upgrades
   - curl
   - nano
   - htop
